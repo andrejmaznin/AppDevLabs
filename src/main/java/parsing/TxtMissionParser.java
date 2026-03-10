@@ -42,6 +42,7 @@ public class TxtMissionParser implements MissionParser {
                 handleTechnique(mission, key, value);
             }
         }
+        mission.validate();
         return mission;
     }
 
