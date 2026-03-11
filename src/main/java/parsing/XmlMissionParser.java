@@ -15,7 +15,9 @@ public class XmlMissionParser implements MissionParser {
     @Override
     public Mission parse(String xmlData) {
         try {
-            return xmlMapper.readValue(xmlData, Mission.class);
+            Mission mission = xmlMapper.readValue(xmlData, Mission.class);
+            mission.validate();
+            return mission;
         } catch (Exception e) {
             throw new RuntimeException("Ошибка XML: " + e.getMessage());
         }

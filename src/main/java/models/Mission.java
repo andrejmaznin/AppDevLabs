@@ -23,6 +23,78 @@ public class Mission {
     @JacksonXmlProperty(localName = "technique")
     private List<Technique> techniques;
 
+    public void validate() throws IllegalArgumentException {
+        if (missionId == null || missionId.trim().isEmpty())
+            throw new IllegalArgumentException("ID миссии не может быть пустым");
+        if (date == null || date.trim().isEmpty())
+            throw new IllegalArgumentException("Дата не может быть пустой");
+        if (location == null || location.trim().isEmpty())
+            throw new IllegalArgumentException("Локация не может быть пустой");
+        if (outcome == null || outcome.trim().isEmpty())
+            throw new IllegalArgumentException("Результат миссии не может быть пустым");
+
+        if (damageCost < 0)
+            throw new IllegalArgumentException("Ущерб не может быть отрицательным");
+
+        if (curse == null) {
+            throw new IllegalArgumentException("Данные о проклятии отсутствуют");
+        }
+        curse.validate();
+
+        if (sorcerers == null || sorcerers.isEmpty()) {
+            throw new IllegalArgumentException("В миссии должен участвовать хотя бы один маг");
+        }
+        for (Sorcerer s : sorcerers) {
+            s.validate();
+        }
+
+        if (techniques == null || techniques.isEmpty()) {
+            throw new IllegalArgumentException("Список примененных техник не может быть пустым");
+        }
+        for (Technique t : techniques) {
+            t.validate();
+        }
+        /*
+        long sumOfTechniques = 0;
+        if (techniques != null) {
+            for (int i = 0; i < techniques.size(); i++) {
+                Technique t = techniques.get(i);
+                sumOfTechniques += t.getDamage();
+            }
+        }
+
+        if (this.damageCost != sumOfTechniques) {
+            throw new IllegalArgumentException("Ошибка: Общий урон (" + this.damageCost +
+                ") не равен сумме урона техник (" + sumOfTechniques + ")");
+        }
+         */
+
+        if (techniques != null) {
+            for (int i = 0; i < techniques.size(); i++) {
+                Technique currentTech = techniques.get(i);
+                String techOwner = currentTech.getOwner();
+
+                boolean ownerFound = false;
+
+                if (sorcerers != null) {
+                    for (int j = 0; j < sorcerers.size(); j++) {
+                        Sorcerer currentSorcerer = sorcerers.get(j);
+                        if (currentSorcerer.getName() != null && techOwner != null) {
+                            if (currentSorcerer.getName().trim().equals(techOwner.trim())) {
+                                ownerFound = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (!ownerFound) {
+                    throw new IllegalArgumentException("Техника '" + currentTech.getName() +
+                        "' принадлежит магу '" + techOwner + "', которого нет в списке участников!");
+                }
+            }
+        }
+
+    }
 
     public String getComment() {
         return comment;

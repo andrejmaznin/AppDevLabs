@@ -32,7 +32,7 @@ public class TxtMissionParser implements MissionParser {
             else if (key.equals("location")) mission.setLocation(value);
             else if (key.equals("outcome")) mission.setOutcome(value);
             else if (key.equals("damageCost")) mission.setDamageCost(Long.parseLong(value));
-            else if (key.equals("comment")) mission.setComment(value);
+            else if (key.equals("note")) mission.setComment(value);
             else if (key.startsWith("curse.")) {
                 if (key.endsWith("name")) mission.getCurse().setName(value);
                 else if (key.endsWith("threatLevel")) mission.getCurse().setThreatLevel(value);
@@ -42,6 +42,7 @@ public class TxtMissionParser implements MissionParser {
                 handleTechnique(mission, key, value);
             }
         }
+        mission.validate();
         return mission;
     }
 

@@ -16,7 +16,9 @@ public class JsonMissionParser implements MissionParser {
     @Override
     public Mission parse(String jsonData) {
         try {
-            return objectMapper.readValue(jsonData, Mission.class);
+            Mission mission = objectMapper.readValue(jsonData, Mission.class);
+            mission.validate();
+            return mission;
         } catch (Exception e) {
             throw new RuntimeException("Ошибка JSON: " + e.getMessage());
         }
