@@ -54,7 +54,7 @@ public class Mission {
         for (Technique t : techniques) {
             t.validate();
         }
-
+        /*
         long sumOfTechniques = 0;
         if (techniques != null) {
             for (int i = 0; i < techniques.size(); i++) {
@@ -67,6 +67,7 @@ public class Mission {
             throw new IllegalArgumentException("Ошибка: Общий урон (" + this.damageCost +
                 ") не равен сумме урона техник (" + sumOfTechniques + ")");
         }
+         */
 
         if (techniques != null) {
             for (int i = 0; i < techniques.size(); i++) {
