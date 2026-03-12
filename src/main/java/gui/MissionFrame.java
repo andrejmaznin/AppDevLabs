@@ -55,7 +55,7 @@ public class MissionFrame {
         sorcerersList.setModel(sorcerersModel);
 
         DefaultListModel<String> techniquesModel = new DefaultListModel<>();
-        mission.getTechniques().forEach(t -> techniquesModel.addElement(t.getName() + " — " + t.getOwner()));
+        mission.getTechniques().forEach(t -> techniquesModel.addElement(t.getName() + " — " + (t.getOwner() != null ? t.getOwner().getName() : "Unknown")));
         techniquesList.setModel(techniquesModel);
     }
 

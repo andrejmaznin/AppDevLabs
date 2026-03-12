@@ -1,9 +1,18 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Technique {
     private String name;
     private String type;
-    private String owner;
+    
+    @JsonIgnore
+    private Sorcerer owner;
+    
+    @JsonProperty("owner")
+    private String ownerName;
+    
     private int damage;
 
     public void validate() throws IllegalArgumentException {
@@ -13,8 +22,8 @@ public class Technique {
         if (type == null || type.trim().isEmpty()) {
             throw new IllegalArgumentException("Тип техники не может быть пустым");
         }
-        if (owner == null || owner.trim().isEmpty()) {
-            throw new IllegalArgumentException("Владелец техники не может быть пустым");
+        if (owner == null) {
+            throw new IllegalArgumentException("Владелец техники не может быть пустым или не найден");
         }
         if (damage < 0) {
             throw new IllegalArgumentException("Урон не может быть отрицательным числом");
@@ -37,12 +46,20 @@ public class Technique {
         this.type = type;
     }
 
-    public String getOwner() {
+    public Sorcerer getOwner() {
         return owner;
     }
 
-    public void setOwner(String owner) {
+    public void setOwner(Sorcerer owner) {
         this.owner = owner;
+    }
+
+    public String getOwnerName() {
+        return ownerName;
+    }
+
+    public void setOwnerName(String ownerName) {
+        this.ownerName = ownerName;
     }
 
     public int getDamage() {

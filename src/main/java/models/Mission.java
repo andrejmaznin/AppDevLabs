@@ -68,32 +68,6 @@ public class Mission {
                 ") не равен сумме урона техник (" + sumOfTechniques + ")");
         }
          */
-
-        if (techniques != null) {
-            for (int i = 0; i < techniques.size(); i++) {
-                Technique currentTech = techniques.get(i);
-                String techOwner = currentTech.getOwner();
-
-                boolean ownerFound = false;
-
-                if (sorcerers != null) {
-                    for (int j = 0; j < sorcerers.size(); j++) {
-                        Sorcerer currentSorcerer = sorcerers.get(j);
-                        if (currentSorcerer.getName() != null && techOwner != null) {
-                            if (currentSorcerer.getName().trim().equals(techOwner.trim())) {
-                                ownerFound = true;
-                                break;
-                            }
-                        }
-                    }
-                }
-                if (!ownerFound) {
-                    throw new IllegalArgumentException("Техника '" + currentTech.getName() +
-                        "' принадлежит магу '" + techOwner + "', которого нет в списке участников!");
-                }
-            }
-        }
-
     }
 
     public String getComment() {
