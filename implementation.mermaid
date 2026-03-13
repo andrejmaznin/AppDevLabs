@@ -1,0 +1,41 @@
+classDiagram
+
+    class Mission {
+        -missionId: String
+        -date: String
+        -location: String
+        -outcome: String
+        -damageCost: long
+        -curse: Curse
+        -comment: String
+        -sorcerers: List~Sorcerer~
+        -techniques: List~Technique~
+        +validate()
+    }
+
+    class Curse {
+        -name: String
+        -threatLevel: String
+        +validate()
+    }
+
+    class Sorcerer {
+        -name: String
+        -rank: String
+        +validate()
+    }
+
+    class Technique {
+        -name: String
+        -type: String
+        -owner: Sorcerer
+        -ownerName: String
+        -damage: int
+        +validate()
+    }
+
+
+    Mission *-- Curse : Содержит
+    Mission *-- Sorcerer : Задействует
+    Mission *-- Technique : Использует
+    Technique o-- Sorcerer : Владеет

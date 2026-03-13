@@ -1,0 +1,42 @@
+---
+config:
+  theme: default
+---
+
+classDiagram
+
+    class Mission {
+        -missionId: String
+        -date: String
+        -location: String
+        -outcome: String
+        -damageCost: long
+        -curse: Curse
+        -comment: String
+        -sorcerers: List~Sorcerer~
+        -techniques: List~Technique~
+    }
+
+    class Curse {
+        -name: String
+        -threatLevel: String
+    }
+
+    class Sorcerer {
+        -name: String
+        -rank: String
+    }
+
+    class Technique {
+        -name: String
+        -type: String
+        -owner: Sorcerer
+        -ownerName: String
+        -damage: int
+    }
+
+
+    Mission *-- Curse : Содержит
+    Mission *-- Sorcerer : Задействует
+    Mission *-- Technique : Использует
+    Technique o-- Sorcerer : Владеет
