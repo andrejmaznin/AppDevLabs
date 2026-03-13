@@ -1,0 +1,170 @@
+classDiagram
+    class Main {
+        +main(args: String[])
+    }
+
+    class Engine {
+        -missions: List~Mission~
+        +importMission(file: File)
+        +getAllMissions(): List~Mission~
+        +findMissionById(id: String): Optional~Mission~
+        +clearMissions()
+    }
+
+    class Mission {
+        -missionId: String
+        -date: String
+        -location: String
+        -outcome: String
+        -damageCost: long
+        -curse: Curse
+        -comment: String
+        -sorcerers: List~Sorcerer~
+        -techniques: List~Technique~
+        +validate()
+        +getComment(): String
+        +setComment(comment: String)
+        +getMissionId(): String
+        +setMissionId(missionId: String)
+        +getDate(): String
+        +setDate(date: String)
+        +getLocation(): String
+        +setLocation(location: String)
+        +getOutcome(): String
+        +setOutcome(outcome: String)
+        +getDamageCost(): long
+        +setDamageCost(damageCost: long)
+        +getCurse(): Curse
+        +setCurse(curse: Curse)
+        +getSorcerers(): List~Sorcerer~
+        +setSorcerers(sorcerers: List~Sorcerer~)
+        +getTechniques(): List~Technique~
+        +setTechniques(techniques: List~Technique~)
+    }
+
+    class Curse {
+        -name: String
+        -threatLevel: String
+        +validate()
+        +getName(): String
+        +setName(name: String)
+        +getThreatLevel(): String
+        +setThreatLevel(threatLevel: String)
+    }
+
+    class Sorcerer {
+        -name: String
+        -rank: String
+        +validate()
+        +getName(): String
+        +setName(name: String)
+        +getRank(): String
+        +setRank(rank: String)
+    }
+
+    class Technique {
+        -name: String
+        -type: String
+        -owner: Sorcerer
+        -ownerName: String
+        -damage: int
+        +validate()
+        +getName(): String
+        +setName(name: String)
+        +getType(): String
+        +setType(type: String)
+        +getOwner(): Sorcerer
+        +setOwner(owner: Sorcerer)
+        +getOwnerName(): String
+        +setOwnerName(ownerName: String)
+        +getDamage(): int
+        +setDamage(damage: int)
+    }
+
+    class MissionParser {
+        <<interface>>
+        +parse(data: String): Mission
+    }
+
+    class JsonMissionParser {
+        -objectMapper: ObjectMapper
+        +parse(jsonData: String): Mission
+        -linkSorcerers(mission: Mission)
+    }
+
+    class XmlMissionParser {
+        -xmlMapper: XmlMapper
+        +parse(xmlData: String): Mission
+        -linkSorcerers(mission: Mission)
+    }
+
+    class TxtMissionParser {
+        +parse(data: String): Mission
+        -linkSorcerers(mission: Mission)
+        -handleSorcerer(mission: Mission, key: String, value: String)
+        -handleTechnique(mission: Mission, key: String, value: String)
+        -extractIndex(key: String): int
+        -ensureSize(list: List, index: int, clazz: Class)
+    }
+
+    class MissionParserFactory {
+        <<enumeration>> ParserType
+        +getParser(type: ParserType): MissionParser
+        +getParserByFileName(fileName: String): MissionParser
+    }
+
+    class MainFrame {
+        -missionsTable: JTable
+        -Main: JPanel
+        -importButton: JButton
+        -engine: Engine
+        -tableModel: MissionTableModel
+        +MainFrame()
+        -showMissionDetails(mission: Mission)
+        +main(args: String[])
+    }
+
+    class MissionFrame {
+        -Main: JPanel
+        -idValue: JTextField
+        -dateValue: JTextField
+        -locationValue: JTextField
+        -resultValue: JTextField
+        -damageLabel: JTextField
+        -commentLabel: JTextField
+        -curseNameValue: JTextField
+        -curseLevelValue: JTextField
+        -sorcerersList: JList~String~
+        -techniquesList: JList~String~
+        +MissionFrame(mission: Mission)
+        +getMainPanel(): JPanel
+        -displayMission(mission: Mission)
+    }
+
+    class MissionTableModel {
+        -columnNames: String[]
+        -missions: List~Mission~
+        +MissionTableModel(missions: List~Mission~)
+        +setMissions(missions: List~Mission~)
+        +getRowCount(): int
+        +getColumnCount(): int
+        +getColumnName(col: int): String
+        +getValueAt(rowIndex: int, columnIndex: int): Object
+    }
+
+    Main ..> MainFrame : Открывает
+    MainFrame *-- Engine : Использует
+    MainFrame *-- MissionTableModel : Использует
+    MainFrame ..> MissionFrame : Открывает
+    MissionFrame o-- Mission : Отображает
+    MissionTableModel o-- Mission : Содержит
+    Engine o-- Mission : Управляет
+    Engine ..> MissionParserFactory : Использует
+    MissionParserFactory ..> MissionParser : Возвращает
+    JsonMissionParser ..|> MissionParser
+    XmlMissionParser ..|> MissionParser
+    TxtMissionParser ..|> MissionParser
+    Mission *-- Curse : Содержит
+    Mission *-- Sorcerer : Задействует
+    Mission *-- Technique : Использует
+    Technique o-- Sorcerer : Владеет

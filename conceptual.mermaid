@@ -1,0 +1,78 @@
+classDiagram
+    class Main {
+    }
+
+    class Engine {
+    }
+
+    class Mission {
+        -missionId: String
+        -date: String
+        -location: String
+        -outcome: String
+        -damageCost: long
+        -curse: Curse
+        -comment: String
+        -sorcerers: List~Sorcerer~
+        -techniques: List~Technique~
+    }
+
+    class Curse {
+        -name: String
+        -threatLevel: String
+    }
+
+    class Sorcerer {
+        -name: String
+        -rank: String
+    }
+
+    class Technique {
+        -name: String
+        -type: String
+        -owner: Sorcerer
+        -ownerName: String
+        -damage: int
+    }
+
+    class MissionParser {
+        <<interface>>
+    }
+
+    class JsonMissionParser {
+    }
+
+    class XmlMissionParser {
+    }
+
+    class TxtMissionParser {
+    }
+
+    class MissionParserFactory {
+    }
+
+    class MainFrame {
+    }
+
+    class MissionFrame {
+    }
+
+    class MissionTableModel {
+    }
+
+    Main ..> MainFrame : Открывает
+    MainFrame *-- Engine : Использует
+    MainFrame *-- MissionTableModel : Использует
+    MainFrame ..> MissionFrame : Открывает
+    MissionFrame o-- Mission : Отображает
+    MissionTableModel o-- Mission : Содержит
+    Engine o-- Mission : Управляет
+    Engine ..> MissionParserFactory : Использует
+    MissionParserFactory ..> MissionParser : Возвращает
+    JsonMissionParser ..|> MissionParser
+    XmlMissionParser ..|> MissionParser
+    TxtMissionParser ..|> MissionParser
+    Mission *-- Curse : Содержит
+    Mission *-- Sorcerer : Задействует
+    Mission *-- Technique : Использует
+    Technique o-- Sorcerer : Владеет
