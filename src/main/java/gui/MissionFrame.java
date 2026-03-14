@@ -42,7 +42,7 @@ public class MissionFrame {
 
     private void displayMission(Mission mission) {
         idValue.setText(mission.getMissionId());
-        dateValue.setText(mission.getDate());
+        dateValue.setText(mission.getDate() != null ? mission.getDate().toString() : "");
         locationValue.setText(mission.getLocation());
         resultValue.setText(mission.getOutcome());
         damageLabel.setText(String.format("%,d", mission.getDamageCost()));

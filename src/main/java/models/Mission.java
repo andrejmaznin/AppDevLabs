@@ -3,12 +3,13 @@ package models;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
+import java.time.LocalDate;
 import java.util.List;
 
 
 public class Mission {
     private String missionId;
-    private String date;
+    private LocalDate date;
     private String location;
     private String outcome;
     private long damageCost;
@@ -26,7 +27,7 @@ public class Mission {
     public void validate() throws IllegalArgumentException {
         if (missionId == null || missionId.trim().isEmpty())
             throw new IllegalArgumentException("ID миссии не может быть пустым");
-        if (date == null || date.trim().isEmpty())
+        if (date == null)
             throw new IllegalArgumentException("Дата не может быть пустой");
         if (location == null || location.trim().isEmpty())
             throw new IllegalArgumentException("Локация не может быть пустой");
@@ -112,11 +113,11 @@ public class Mission {
         this.missionId = missionId;
     }
 
-    public String getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 
