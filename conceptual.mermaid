@@ -7,7 +7,7 @@ classDiagram
 
     class Mission {
         -missionId: String
-        -date: String
+        -date: Date
         -location: String
         -outcome: String
         -damageCost: long
@@ -36,7 +36,7 @@ classDiagram
     }
 
 
-    Mission *-- Curse : Содержит
-    Mission *-- Sorcerer : Задействует
-    Mission *-- Technique : Использует
-    Technique o-- Sorcerer : Владеет
+    Mission o-- Curse : Содержит
+    Mission o-- Sorcerer : Задействует
+    Mission o-- Technique : Использует
+    Technique *-- Sorcerer : Владеет

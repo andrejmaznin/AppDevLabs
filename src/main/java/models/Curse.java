@@ -9,7 +9,7 @@ public class Curse {
             throw new IllegalArgumentException("Имя проклятия не может быть пустым");
         }
 
-        if (threatLevel == null || name.trim().isEmpty()) {
+        if (threatLevel == null || threatLevel.trim().isEmpty()) {
             throw new IllegalArgumentException("Уровень угрозы не может быть пустым");
         }
     }
