@@ -38,7 +38,7 @@ public class MissionTableModel extends AbstractTableModel {
         Mission mission = missions.get(rowIndex);
         return switch (columnIndex) {
             case 0 -> mission.getMissionId();
-            case 1 -> mission.getDate();
+            case 1 -> mission.getDate() != null ? mission.getDate().toString() : "";
             case 2 -> mission.getLocation();
             case 3 -> mission.getOutcome();
             case 4 -> String.format("%,d", mission.getDamageCost());

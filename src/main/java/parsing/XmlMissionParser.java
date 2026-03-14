@@ -2,6 +2,7 @@ package parsing;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import models.Mission;
 import models.Sorcerer;
 import models.Technique;
@@ -11,6 +12,7 @@ public class XmlMissionParser implements MissionParser {
 
     public XmlMissionParser() {
         this.xmlMapper = new XmlMapper();
+        this.xmlMapper.registerModule(new JavaTimeModule());
         this.xmlMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 

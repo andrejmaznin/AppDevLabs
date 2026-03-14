@@ -1,3 +1,8 @@
+---
+config:
+  theme: default
+---
+
 classDiagram
     class Main {
     }
@@ -72,7 +77,7 @@ classDiagram
     JsonMissionParser ..|> MissionParser
     XmlMissionParser ..|> MissionParser
     TxtMissionParser ..|> MissionParser
-    Mission *-- Curse : Содержит
-    Mission *-- Sorcerer : Задействует
-    Mission *-- Technique : Использует
-    Technique o-- Sorcerer : Владеет
+    Mission o-- Curse : Содержит
+    Mission o-- Sorcerer : Задействует
+    Mission o-- Technique : Использует
+    Technique *-- Sorcerer : Владеет

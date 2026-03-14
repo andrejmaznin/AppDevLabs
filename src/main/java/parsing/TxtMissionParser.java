@@ -5,6 +5,7 @@ import models.Mission;
 import models.Sorcerer;
 import models.Technique;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -28,7 +29,7 @@ public class TxtMissionParser implements MissionParser {
             String value = parts[1].trim();
 
             if (key.equals("missionId")) mission.setMissionId(value);
-            else if (key.equals("date")) mission.setDate(value);
+            else if (key.equals("date")) mission.setDate(LocalDate.parse(value));
             else if (key.equals("location")) mission.setLocation(value);
             else if (key.equals("outcome")) mission.setOutcome(value);
             else if (key.equals("damageCost")) mission.setDamageCost(Long.parseLong(value));
