@@ -43,8 +43,31 @@ public class TxtMissionParser implements MissionParser {
                 handleTechnique(mission, key, value);
             }
         }
+        linkSorcerers(mission);
         mission.validate();
         return mission;
+    }
+
+    private void linkSorcerers(Mission mission) {
+        if (mission.getTechniques() != null && mission.getSorcerers() != null) {
+            for (Technique t : mission.getTechniques()) {
+                String ownerName = t.getOwnerName();
+                if (ownerName != null) {
+                    boolean found = false;
+                    for (Sorcerer s : mission.getSorcerers()) {
+                        if (s.getName() != null && s.getName().trim().equals(ownerName.trim())) {
+                            t.setOwner(s);
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        throw new IllegalArgumentException("Техника '" + t.getName() +
+                            "' принадлежит магу '" + ownerName + "', которого нет в списке участников!");
+                    }
+                }
+            }
+        }
     }
 
     private void handleSorcerer(Mission mission, String key, String value) {
@@ -63,7 +86,7 @@ public class TxtMissionParser implements MissionParser {
 
         if (key.endsWith(".name")) t.setName(value);
         else if (key.endsWith(".type")) t.setType(value);
-        else if (key.endsWith(".owner")) t.setOwner(value);
+        else if (key.endsWith(".owner")) t.setOwnerName(value);
         else if (key.endsWith(".damage")) t.setDamage(Integer.parseInt(value));
     }
 
