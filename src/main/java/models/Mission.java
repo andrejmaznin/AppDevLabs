@@ -1,13 +1,12 @@
 package models;
 
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import builder.StandardMissionBuilder;
+import validation.ValChainFactory;
 
 import java.util.List;
 
-import validation.ValChainFactory;
-
-
+@JsonDeserialize(builder = StandardMissionBuilder.class)
 public class Mission {
     private String missionId;
     private String date;
@@ -17,12 +16,7 @@ public class Mission {
     private Curse curse;
     private String comment;
 
-    @JacksonXmlElementWrapper(localName = "sorcerers")
-    @JacksonXmlProperty(localName = "sorcerer")
     private List<Sorcerer> sorcerers;
-
-    @JacksonXmlElementWrapper(localName = "techniques")
-    @JacksonXmlProperty(localName = "technique")
     private List<Technique> techniques;
 
     public void validate() throws IllegalArgumentException {

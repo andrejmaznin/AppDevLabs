@@ -23,7 +23,7 @@ public class SmartMissionFrame {
     }
 
     public static void showInFrame(SmartTreeReport report) {
-        JFrame f = new JFrame("Smart Mission Viewer");
+        JFrame f = new JFrame("Умное отображение отчетов");
         f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         SmartMissionFrame panel = new SmartMissionFrame(report);
         f.setContentPane(panel.getMainPanel());
