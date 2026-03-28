@@ -6,20 +6,6 @@ public class Technique {
     private String owner;
     private int damage;
 
-    public void validate() throws IllegalArgumentException {
-        if (name == null || name.trim().isEmpty()) {
-            throw new IllegalArgumentException("Название техники не может быть пустым");
-        }
-        if (type == null || type.trim().isEmpty()) {
-            throw new IllegalArgumentException("Тип техники не может быть пустым");
-        }
-        if (owner == null || owner.trim().isEmpty()) {
-            throw new IllegalArgumentException("Владелец техники не может быть пустым");
-        }
-        if (damage < 0) {
-            throw new IllegalArgumentException("Урон не может быть отрицательным числом");
-        }
-    }
 
     public String getName() {
         return name;
