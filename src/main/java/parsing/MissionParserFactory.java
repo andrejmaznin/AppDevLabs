@@ -9,9 +9,9 @@ public class MissionParserFactory {
     private static final Map<ParserType, Supplier<MissionParser>> registry = new EnumMap<>(ParserType.class);
 
     static {
-        registry.put(ParserType.JSON, JsonMissionParser::new);
-        registry.put(ParserType.XML, XmlMissionParser::new);
-        registry.put(ParserType.TXT, TxtMissionParser::new);
+        register(ParserType.JSON, JsonMissionParser::new);
+        register(ParserType.XML, XmlMissionParser::new);
+        register(ParserType.TXT, TxtMissionParser::new);
     }
 
     public static void register(ParserType type, Supplier<MissionParser> supplier) {
