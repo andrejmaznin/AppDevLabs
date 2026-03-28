@@ -5,6 +5,10 @@ import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import logic.GUIEngine; // Ваш движок
 import models.Mission;
+import reports.BasicMissionReport;
+import reports.BasicReportGenerator;
+import reports.SmartTreeReport;
+import reports.UniversalTreeGenerator;
 
 import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
@@ -61,10 +65,13 @@ public class MainFrame {
                 if (e.getClickCount() == 1 && SwingUtilities.isLeftMouseButton(e)) {
                     if (modelCol == 6 || modelCol == 7) {
                         Mission mission = tableModel.getMissionAt(modelRow);
+
                         if (modelCol == 6) {
-                            SwingUtilities.invokeLater(() -> showMissionDetails(mission));
+                            BasicMissionReport report = new BasicReportGenerator().generate(mission);
+                            SwingUtilities.invokeLater(() -> showMissionDetails(report));
                         } else {
-                            SwingUtilities.invokeLater(() -> SmartMissionFrame.showInFrame(mission));
+                            SmartTreeReport report = new UniversalTreeGenerator().generate(mission);
+                            SwingUtilities.invokeLater(() -> SmartMissionFrame.showInFrame(report));
                         }
                         return;
                     }
@@ -74,11 +81,11 @@ public class MainFrame {
                     int row = missionsTable.getSelectedRow();
                     if (row != -1) {
                         int modelRow2 = missionsTable.convertRowIndexToModel(row);
-
                         String missionId = (String) tableModel.getValueAt(modelRow2, 0);
 
                         engine.findMissionById(missionId).ifPresent(mission -> {
-                            showMissionDetails(mission);
+                            BasicMissionReport report = new BasicReportGenerator().generate(mission);
+                            showMissionDetails(report);
                         });
                     }
                 }
@@ -105,9 +112,9 @@ public class MainFrame {
         });
     }
 
-    private void showMissionDetails(Mission mission) {
-        JFrame detailFrame = new JFrame("Детали миссии: " + mission.getMissionId());
-        detailFrame.setContentPane(new MissionFrame(mission).getMainPanel());
+    private void showMissionDetails(BasicMissionReport report) {
+        JFrame detailFrame = new JFrame("Детали миссии: " + report.getMissionId());
+        detailFrame.setContentPane(new MissionFrame(report).getMainPanel());
         detailFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         detailFrame.pack();
         detailFrame.setLocationRelativeTo(Main);

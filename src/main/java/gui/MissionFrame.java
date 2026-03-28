@@ -3,7 +3,7 @@ package gui;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
-import models.Mission;
+import reports.BasicMissionReport;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -32,34 +32,32 @@ public class MissionFrame {
     private JList<String> sorcerersList;
     private JList<String> techniquesList;
 
-    public MissionFrame(Mission mission) {
-        displayMission(mission);
+    public MissionFrame(BasicMissionReport report) {
+        displayReport(report);
+    }
+
+    private void displayReport(BasicMissionReport report) {
+        idValue.setText(report.getMissionId());
+        dateValue.setText(report.getDate());
+        locationValue.setText(report.getLocation());
+        resultValue.setText(report.getOutcome());
+        damageLabel.setText(report.getFormattedDamage());
+        commentLabel.setText(report.getComment());
+
+        curseNameValue.setText(report.getCurseName());
+        curseLevelValue.setText(report.getCurseThreatLevel());
+
+        DefaultListModel<String> sorcerersModel = new DefaultListModel<>();
+        report.getSorcerersDetails().forEach(sorcerersModel::addElement);
+        sorcerersList.setModel(sorcerersModel);
+
+        DefaultListModel<String> techniquesModel = new DefaultListModel<>();
+        report.getTechniquesDetails().forEach(techniquesModel::addElement);
+        techniquesList.setModel(techniquesModel);
     }
 
     public JPanel getMainPanel() {
         return Main;
-    }
-
-    private void displayMission(Mission mission) {
-        idValue.setText(mission.getMissionId());
-        dateValue.setText(mission.getDate());
-        locationValue.setText(mission.getLocation());
-        resultValue.setText(mission.getOutcome());
-        damageLabel.setText(String.format("%,d", mission.getDamageCost()));
-        commentLabel.setText(mission.getComment() != null ? mission.getComment() : "—");
-
-        if (mission.getCurse() != null) {
-            curseNameValue.setText(mission.getCurse().getName());
-            curseLevelValue.setText(mission.getCurse().getThreatLevel());
-        }
-
-        DefaultListModel<String> sorcerersModel = new DefaultListModel<>();
-        mission.getSorcerers().forEach(s -> sorcerersModel.addElement(s.getName() + " (" + s.getRank() + ")"));
-        sorcerersList.setModel(sorcerersModel);
-
-        DefaultListModel<String> techniquesModel = new DefaultListModel<>();
-        mission.getTechniques().forEach(t -> techniquesModel.addElement(t.getName() + " — " + t.getOwner()));
-        techniquesList.setModel(techniquesModel);
     }
 
     {

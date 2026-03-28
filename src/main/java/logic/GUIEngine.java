@@ -3,7 +3,6 @@ package logic;
 import models.Mission;
 import parsing.MissionParser;
 import parsing.MissionParserFactory;
-import gui.SmartMissionFrame;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -43,20 +42,6 @@ public class GUIEngine {
         }
     }
 
-    public void openSmartFrame(Mission mission) {
-        if (mission == null) throw new IllegalArgumentException("mission is null");
-        SmartMissionFrame.showInFrame(mission);
-    }
-
-    public void openSmartFrameFromFile(File file) throws Exception {
-        if (file == null || !file.exists()) {
-            throw new IllegalArgumentException("Файл не выбран или не существует.");
-        }
-        String content = Files.readString(file.toPath());
-        MissionParser parser = MissionParserFactory.getParserByFileName(file.getName());
-        Mission mission = parser.parse(content);
-        openSmartFrame(mission);
-    }
 
     public List<Mission> getAllMissions() {
         return store.getAll();
