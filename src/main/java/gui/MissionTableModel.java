@@ -1,26 +1,24 @@
 package gui;
 
+import logic.MissionStore;
+import logic.MissionStoreListener;
 import models.Mission;
 
+import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
-import java.util.List;
 
-public class MissionTableModel extends AbstractTableModel {
-    private final String[] columnNames = {"ID", "Дата", "Локация", "Результат", "Ущерб", "Комментарий"};
-    private List<Mission> missions;
+public class MissionTableModel extends AbstractTableModel implements MissionStoreListener {
+    private final String[] columnNames = {"ID", "Дата", "Локация", "Результат", "Ущерб", "Комментарий", "Панель", "Дерево"};
+    private final MissionStore store;
 
-    public MissionTableModel(List<Mission> missions) {
-        this.missions = missions;
-    }
-
-    public void setMissions(List<Mission> missions) {
-        this.missions = missions;
-        fireTableDataChanged();
+    public MissionTableModel(MissionStore store) {
+        this.store = store;
+        this.store.addListener(this);
     }
 
     @Override
     public int getRowCount() {
-        return missions.size();
+        return store.size();
     }
 
     @Override
@@ -35,7 +33,7 @@ public class MissionTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Mission mission = missions.get(rowIndex);
+        Mission mission = store.get(rowIndex);
         return switch (columnIndex) {
             case 0 -> mission.getMissionId();
             case 1 -> mission.getDate();
@@ -43,7 +41,22 @@ public class MissionTableModel extends AbstractTableModel {
             case 3 -> mission.getOutcome();
             case 4 -> String.format("%,d", mission.getDamageCost());
             case 5 -> mission.getComment();
+            case 6 -> "Панель";
+            case 7 -> "Дерево";
             default -> null;
         };
+    }
+
+    public Mission getMissionAt(int row) {
+        return store.get(row);
+    }
+
+    @Override
+    public void onStoreChanged() {
+        if (SwingUtilities.isEventDispatchThread()) {
+            fireTableDataChanged();
+        } else {
+            SwingUtilities.invokeLater(this::fireTableDataChanged);
+        }
     }
 }
