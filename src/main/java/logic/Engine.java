@@ -37,7 +37,7 @@ public class Engine {
     }
 
     public List<Mission> getAllMissions() {
-        return Collections.unmodifiableList(missions);
+        return missions;
     }
 
     public Optional<Mission> findMissionById(String id) {
