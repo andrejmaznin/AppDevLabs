@@ -12,6 +12,8 @@ public class MissionParserFactory {
         register(ParserType.JSON, JsonMissionParser::new);
         register(ParserType.XML, XmlMissionParser::new);
         register(ParserType.TXT, TxtMissionParser::new);
+        register(ParserType.YAML, YamlMissionParser::new);
+        register(ParserType.BIN, BinMissionParser::new);
     }
 
     public static void register(ParserType type, Supplier<MissionParser> supplier) {

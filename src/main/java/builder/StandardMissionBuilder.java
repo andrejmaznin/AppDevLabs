@@ -22,27 +22,54 @@ public class StandardMissionBuilder implements MissionBuilder {
     private String comment;
     private final List<Sorcerer> sorcerers = new ArrayList<>();
     private final List<Technique> techniques = new ArrayList<>();
+    private models.EconomicAssessment economicAssessment;
+    private models.CivilianImpact civilianImpact;
+    private models.EnemyActivity enemyActivity;
+    private models.EnvironmentConditions environmentConditions;
+    private List<models.OperationEvent> operationTimeline;
+
 
     @Override
-    public MissionBuilder setMissionId(String id) { this.missionId = id; return this; }
-    
-    @Override
-    public MissionBuilder setDate(String date) { this.date = date; return this; }
-    
-    @Override
-    public MissionBuilder setLocation(String location) { this.location = location; return this; }
-    
-    @Override
-    public MissionBuilder setOutcome(String outcome) { this.outcome = outcome; return this; }
-    
-    @Override
-    public MissionBuilder setDamageCost(long cost) { this.damageCost = cost; return this; }
-    
-    @Override
-    public MissionBuilder setComment(String comment) { this.comment = comment; return this; }
+    public MissionBuilder setMissionId(String id) {
+        this.missionId = id;
+        return this;
+    }
 
     @Override
-    public MissionBuilder setCurse(Curse curse) { this.curse = curse; return this; }
+    public MissionBuilder setDate(String date) {
+        this.date = date;
+        return this;
+    }
+
+    @Override
+    public MissionBuilder setLocation(String location) {
+        this.location = location;
+        return this;
+    }
+
+    @Override
+    public MissionBuilder setOutcome(String outcome) {
+        this.outcome = outcome;
+        return this;
+    }
+
+    @Override
+    public MissionBuilder setDamageCost(long cost) {
+        this.damageCost = cost;
+        return this;
+    }
+
+    @Override
+    public MissionBuilder setComment(String comment) {
+        this.comment = comment;
+        return this;
+    }
+
+    @Override
+    public MissionBuilder setCurse(Curse curse) {
+        this.curse = curse;
+        return this;
+    }
 
     @Override
     @JacksonXmlElementWrapper(localName = "sorcerers")
@@ -85,6 +112,36 @@ public class StandardMissionBuilder implements MissionBuilder {
     }
 
     @Override
+    public MissionBuilder setEconomicAssessment(models.EconomicAssessment economicAssessment) {
+        this.economicAssessment = economicAssessment;
+        return this;
+    }
+
+    @Override
+    public MissionBuilder setCivilianImpact(models.CivilianImpact civilianImpact) {
+        this.civilianImpact = civilianImpact;
+        return this;
+    }
+
+    @Override
+    public MissionBuilder setEnemyActivity(models.EnemyActivity enemyActivity) {
+        this.enemyActivity = enemyActivity;
+        return this;
+    }
+
+    @Override
+    public MissionBuilder setEnvironmentConditions(models.EnvironmentConditions environmentConditions) {
+        this.environmentConditions = environmentConditions;
+        return this;
+    }
+
+    @Override
+    public MissionBuilder setOperationTimeline(List<models.OperationEvent> operationTimeline) {
+        this.operationTimeline = operationTimeline;
+        return this;
+    }
+
+    @Override
     public Mission build() {
         Mission mission = new Mission();
         mission.setMissionId(this.missionId);
@@ -96,9 +153,14 @@ public class StandardMissionBuilder implements MissionBuilder {
         mission.setCurse(this.curse);
         mission.setSorcerers(this.sorcerers);
         mission.setTechniques(this.techniques);
+        mission.setEconomicAssessment(this.economicAssessment);
+        mission.setCivilianImpact(this.civilianImpact);
+        mission.setEnemyActivity(this.enemyActivity);
+        mission.setEnvironmentConditions(this.environmentConditions);
+        mission.setOperationTimeline(this.operationTimeline);
 
         mission.validate();
-        
+
         return mission;
     }
 }

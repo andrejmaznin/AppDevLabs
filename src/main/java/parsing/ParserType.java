@@ -3,7 +3,7 @@ package parsing;
 import java.util.Locale;
 
 public enum ParserType {
-    JSON("json"), XML("xml"), TXT("txt");
+    JSON("json"), XML("xml"), TXT("txt"), YAML("yaml"), BIN("");
 
     private final String extension;
 
