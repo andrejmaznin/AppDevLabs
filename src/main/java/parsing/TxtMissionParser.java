@@ -1,72 +1,86 @@
 package parsing;
 
 import builder.StandardMissionBuilder;
+import models.EnvironmentConditions;
 import models.Mission;
 import models.Sorcerer;
 import models.Technique;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class TxtMissionParser implements MissionParser {
 
     @Override
     public Mission parse(String data) {
         StandardMissionBuilder builder = new StandardMissionBuilder();
-
         String[] lines = data.split("\\r?\\n");
-        Map<Integer, Sorcerer> sorcererMap = new HashMap<>();
-        Map<Integer, Technique> techniqueMap = new HashMap<>();
+
+        String currentSection = "";
+        Sorcerer currentSorcerer = null;
+        Technique currentTechnique = null;
+        EnvironmentConditions env = null;
 
         for (String line : lines) {
-            if (line.trim().isEmpty() || !line.contains(": ")) continue;
+            line = line.trim();
+            if (line.isEmpty()) continue;
 
-            String[] parts = line.split(": ", 2);
+            if (line.startsWith("[") && line.endsWith("]")) {
+                currentSection = line.substring(1, line.length() - 1);
+
+                if (currentSection.equals("SORCERER")) {
+                    currentSorcerer = new Sorcerer();
+                    builder.addSorcerer(currentSorcerer);
+                } else if (currentSection.equals("TECHNIQUE")) {
+                    currentTechnique = new Technique();
+                    builder.addTechnique(currentTechnique);
+                } else if (currentSection.equals("ENVIRONMENT")) {
+                    env = new EnvironmentConditions();
+                    builder.setEnvironmentConditions(env);
+                }
+                continue;
+            }
+
+            String[] parts = line.split("=", 2);
+            if (parts.length < 2) continue;
             String key = parts[0].trim();
             String value = parts[1].trim();
 
-            if (key.equals("missionId")) builder.setMissionId(value);
-            else if (key.equals("date")) builder.setDate(value);
-            else if (key.equals("location")) builder.setLocation(value);
-            else if (key.equals("outcome")) builder.setOutcome(value);
-            else if (key.equals("damageCost")) builder.setDamageCost(Long.parseLong(value));
-            else if (key.equals("note")) builder.setComment(value);
-            else if (key.startsWith("curse.")) {
-                if (key.endsWith("name")) builder.setCurseDetails(value, null);
-                else if (key.endsWith("threatLevel")) builder.setCurseDetails(null, value);
-            } else if (key.startsWith("sorcerer[")) {
-                handleSorcerer(sorcererMap, key, value);
-            } else if (key.startsWith("technique[")) {
-                handleTechnique(techniqueMap, key, value);
+            switch (currentSection) {
+                case "MISSION":
+                    if (key.equals("missionId")) builder.setMissionId(value);
+                    else if (key.equals("date")) builder.setDate(value);
+                    else if (key.equals("location")) builder.setLocation(value);
+                    else if (key.equals("outcome")) builder.setOutcome(value);
+                    else if (key.equals("damageCost")) builder.setDamageCost(Long.parseLong(value));
+                    break;
+                case "CURSE":
+                    if (key.equals("name")) builder.setCurseDetails(value, null);
+                    else if (key.equals("threatLevel")) builder.setCurseDetails(null, value);
+                    break;
+                case "SORCERER":
+                    if (currentSorcerer != null) {
+                        if (key.equals("name")) currentSorcerer.setName(value);
+                        else if (key.equals("rank")) currentSorcerer.setRank(value);
+                    }
+                    break;
+                case "TECHNIQUE":
+                    if (currentTechnique != null) {
+                        if (key.equals("name")) currentTechnique.setName(value);
+                        else if (key.equals("type")) currentTechnique.setType(value);
+                        else if (key.equals("owner")) currentTechnique.setOwner(value);
+                        else if (key.equals("damage")) currentTechnique.setDamage(Integer.parseInt(value));
+                    }
+                    break;
+                case "ENVIRONMENT":
+                    if (env != null) {
+                        if (key.equals("weather")) env.setWeather(value);
+                        else if (key.equals("timeOfDay")) env.setTimeOfDay(value);
+                        else if (key.equals("visibility")) env.setVisibility(value);
+                        else if (key.equals("cursedEnergyDensity"))
+                            env.setCursedEnergyDensity(Double.parseDouble(value));
+                    }
+                    break;
             }
         }
 
-        sorcererMap.values().forEach(builder::addSorcerer);
-        techniqueMap.values().forEach(builder::addTechnique);
-
         return builder.build();
-    }
-
-    private void handleSorcerer(Map<Integer, Sorcerer> map, String key, String value) {
-        int index = extractIndex(key);
-        Sorcerer s = map.computeIfAbsent(index, k -> new Sorcerer());
-        if (key.endsWith(".name")) s.setName(value);
-        else if (key.endsWith(".rank")) s.setRank(value);
-    }
-
-    private void handleTechnique(Map<Integer, Technique> map, String key, String value) {
-        int index = extractIndex(key);
-        Technique t = map.computeIfAbsent(index, k -> new Technique());
-        if (key.endsWith(".name")) t.setName(value);
-        else if (key.endsWith(".type")) t.setType(value);
-        else if (key.endsWith(".owner")) t.setOwner(value);
-        else if (key.endsWith(".damage")) t.setDamage(Integer.parseInt(value));
-    }
-
-    private int extractIndex(String key) {
-        Matcher m = Pattern.compile("\\[(\\d+)\\]").matcher(key);
-        return m.find() ? Integer.parseInt(m.group(1)) : 0;
     }
 }

@@ -32,5 +32,15 @@ public interface MissionBuilder {
 
     MissionBuilder addTechnique(Technique technique);
 
+    MissionBuilder setEconomicAssessment(models.EconomicAssessment economicAssessment);
+
+    MissionBuilder setCivilianImpact(models.CivilianImpact civilianImpact);
+
+    MissionBuilder setEnemyActivity(models.EnemyActivity enemyActivity);
+
+    MissionBuilder setEnvironmentConditions(models.EnvironmentConditions environmentConditions);
+
+    MissionBuilder setOperationTimeline(List<models.OperationEvent> operationTimeline);
+
     Mission build();
 }
