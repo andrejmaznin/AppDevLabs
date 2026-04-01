@@ -1,12 +1,13 @@
 package logic;
 
 import models.Mission;
+import specifications.MissionSpecification;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 
 public class MissionStore {
@@ -25,10 +26,6 @@ public class MissionStore {
         return new ArrayList<>(missions);
     }
 
-    public synchronized Optional<Mission> findById(String id) {
-        if (id == null) return Optional.empty();
-        return missions.stream().filter(m -> id.equals(m.getMissionId())).findFirst();
-    }
 
     public synchronized void clear() {
         missions.clear();
@@ -62,5 +59,19 @@ public class MissionStore {
             } catch (Exception ignored) {
             }
         }
+    }
+
+    public synchronized List<Mission> find(MissionSpecification specification) {
+        if (specification == null) {
+            return new ArrayList<>(missions);
+        }
+        return missions.stream()
+            .filter(specification::isSatisfiedBy)
+            .collect(Collectors.toList());
+    }
+
+    public synchronized Optional<Mission> findById(String id) {
+        List<Mission> result = find(new specifications.MissionIdSpecification(id));
+        return result.isEmpty() ? Optional.empty() : Optional.of(result.getFirst());
     }
 }

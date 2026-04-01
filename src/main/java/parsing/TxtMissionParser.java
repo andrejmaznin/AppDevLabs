@@ -1,11 +1,12 @@
 package parsing;
 
-import models.Curse;
+import builder.StandardMissionBuilder;
 import models.Mission;
 import models.Sorcerer;
 import models.Technique;
 
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,12 +14,11 @@ public class TxtMissionParser implements MissionParser {
 
     @Override
     public Mission parse(String data) {
-        Mission mission = new Mission();
-        mission.setCurse(new Curse());
-        mission.setSorcerers(new ArrayList<>());
-        mission.setTechniques(new ArrayList<>());
+        StandardMissionBuilder builder = new StandardMissionBuilder();
 
         String[] lines = data.split("\\r?\\n");
+        Map<Integer, Sorcerer> sorcererMap = new HashMap<>();
+        Map<Integer, Technique> techniqueMap = new HashMap<>();
 
         for (String line : lines) {
             if (line.trim().isEmpty() || !line.contains(": ")) continue;
@@ -27,39 +27,38 @@ public class TxtMissionParser implements MissionParser {
             String key = parts[0].trim();
             String value = parts[1].trim();
 
-            if (key.equals("missionId")) mission.setMissionId(value);
-            else if (key.equals("date")) mission.setDate(value);
-            else if (key.equals("location")) mission.setLocation(value);
-            else if (key.equals("outcome")) mission.setOutcome(value);
-            else if (key.equals("damageCost")) mission.setDamageCost(Long.parseLong(value));
-            else if (key.equals("note")) mission.setComment(value);
+            if (key.equals("missionId")) builder.setMissionId(value);
+            else if (key.equals("date")) builder.setDate(value);
+            else if (key.equals("location")) builder.setLocation(value);
+            else if (key.equals("outcome")) builder.setOutcome(value);
+            else if (key.equals("damageCost")) builder.setDamageCost(Long.parseLong(value));
+            else if (key.equals("note")) builder.setComment(value);
             else if (key.startsWith("curse.")) {
-                if (key.endsWith("name")) mission.getCurse().setName(value);
-                else if (key.endsWith("threatLevel")) mission.getCurse().setThreatLevel(value);
+                if (key.endsWith("name")) builder.setCurseDetails(value, null);
+                else if (key.endsWith("threatLevel")) builder.setCurseDetails(null, value);
             } else if (key.startsWith("sorcerer[")) {
-                handleSorcerer(mission, key, value);
+                handleSorcerer(sorcererMap, key, value);
             } else if (key.startsWith("technique[")) {
-                handleTechnique(mission, key, value);
+                handleTechnique(techniqueMap, key, value);
             }
         }
-        mission.validate();
-        return mission;
+
+        sorcererMap.values().forEach(builder::addSorcerer);
+        techniqueMap.values().forEach(builder::addTechnique);
+
+        return builder.build();
     }
 
-    private void handleSorcerer(Mission mission, String key, String value) {
+    private void handleSorcerer(Map<Integer, Sorcerer> map, String key, String value) {
         int index = extractIndex(key);
-        ensureSize(mission.getSorcerers(), index, Sorcerer.class);
-        Sorcerer s = mission.getSorcerers().get(index);
-
+        Sorcerer s = map.computeIfAbsent(index, k -> new Sorcerer());
         if (key.endsWith(".name")) s.setName(value);
         else if (key.endsWith(".rank")) s.setRank(value);
     }
 
-    private void handleTechnique(Mission mission, String key, String value) {
+    private void handleTechnique(Map<Integer, Technique> map, String key, String value) {
         int index = extractIndex(key);
-        ensureSize(mission.getTechniques(), index, Technique.class);
-        Technique t = mission.getTechniques().get(index);
-
+        Technique t = map.computeIfAbsent(index, k -> new Technique());
         if (key.endsWith(".name")) t.setName(value);
         else if (key.endsWith(".type")) t.setType(value);
         else if (key.endsWith(".owner")) t.setOwner(value);
@@ -69,15 +68,5 @@ public class TxtMissionParser implements MissionParser {
     private int extractIndex(String key) {
         Matcher m = Pattern.compile("\\[(\\d+)\\]").matcher(key);
         return m.find() ? Integer.parseInt(m.group(1)) : 0;
-    }
-
-    private <T> void ensureSize(java.util.List<T> list, int index, Class<T> clazz) {
-        while (list.size() <= index) {
-            try {
-                list.add(clazz.getDeclaredConstructor().newInstance());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
     }
 }
