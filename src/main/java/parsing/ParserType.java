@@ -16,7 +16,8 @@ public enum ParserType {
     }
 
     public static ParserType fromExtension(String ext) {
-        if (ext == null || ext.isEmpty()) return null;
+        if (ext == null) return null;
+
         String e = ext.toLowerCase(Locale.ROOT);
         for (ParserType p : values()) {
             if (p.getExtension().equals(e)) return p;

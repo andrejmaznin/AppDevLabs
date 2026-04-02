@@ -143,6 +143,23 @@ public class StandardMissionBuilder implements MissionBuilder {
 
     @Override
     public Mission build() {
+        if (!this.techniques.isEmpty()) {
+            for (Technique tech : this.techniques) {
+                String ownerName = tech.getOwner();
+                if (ownerName != null && !ownerName.trim().isEmpty()) {
+                    boolean isSorcererPresent = this.sorcerers.stream()
+                        .anyMatch(s -> s.getName() != null && s.getName().trim().equalsIgnoreCase(ownerName.trim()));
+
+                    if (!isSorcererPresent) {
+                        Sorcerer autoAddedSorcerer = new Sorcerer();
+                        autoAddedSorcerer.setName(ownerName.trim());
+                        autoAddedSorcerer.setRank("НЕИЗВЕСТНО");
+                        this.sorcerers.add(autoAddedSorcerer);
+                    }
+                }
+            }
+        }
+
         Mission mission = new Mission();
         mission.setMissionId(this.missionId);
         mission.setDate(this.date);
