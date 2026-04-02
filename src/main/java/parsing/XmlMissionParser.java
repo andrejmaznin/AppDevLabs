@@ -10,6 +10,7 @@ public class XmlMissionParser implements MissionParser {
     public XmlMissionParser() {
         this.xmlMapper = new XmlMapper();
         this.xmlMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        this.xmlMapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
     }
 
     @Override
@@ -17,7 +18,7 @@ public class XmlMissionParser implements MissionParser {
         try {
             return xmlMapper.readValue(xmlData, Mission.class);
         } catch (Exception e) {
-            throw new RuntimeException("Ошибка XML: " + e.getMessage());
+            throw new RuntimeException("Ошибка XML: " + e.getMessage(), e);
         }
     }
 }

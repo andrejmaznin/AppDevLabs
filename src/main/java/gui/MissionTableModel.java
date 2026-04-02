@@ -3,22 +3,42 @@ package gui;
 import logic.MissionStore;
 import logic.MissionStoreListener;
 import models.Mission;
+import specifications.MissionSpecification;
 
 import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
+import java.util.List;
 
 public class MissionTableModel extends AbstractTableModel implements MissionStoreListener {
     private final String[] columnNames = {"ID", "Дата", "Локация", "Результат", "Ущерб", "Комментарий", "Панель", "Дерево"};
     private final MissionStore store;
 
+    private List<Mission> displayList;
+    private MissionSpecification currentFilter = null;
+
     public MissionTableModel(MissionStore store) {
         this.store = store;
+        this.displayList = store.getAll();
         this.store.addListener(this);
+    }
+
+    public void setFilter(MissionSpecification spec) {
+        this.currentFilter = spec;
+        updateData();
+    }
+
+    private void updateData() {
+        if (currentFilter == null) {
+            displayList = store.getAll();
+        } else {
+            displayList = store.find(currentFilter);
+        }
+        fireTableDataChanged();
     }
 
     @Override
     public int getRowCount() {
-        return store.size();
+        return displayList.size();
     }
 
     @Override
@@ -33,7 +53,7 @@ public class MissionTableModel extends AbstractTableModel implements MissionStor
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Mission mission = store.get(rowIndex);
+        Mission mission = displayList.get(rowIndex);
         return switch (columnIndex) {
             case 0 -> mission.getMissionId();
             case 1 -> mission.getDate();
@@ -48,15 +68,16 @@ public class MissionTableModel extends AbstractTableModel implements MissionStor
     }
 
     public Mission getMissionAt(int row) {
-        return store.get(row);
+        return displayList.get(row);
     }
 
     @Override
     public void onStoreChanged() {
+        Runnable updateTask = this::updateData;
         if (SwingUtilities.isEventDispatchThread()) {
-            fireTableDataChanged();
+            updateTask.run();
         } else {
-            SwingUtilities.invokeLater(this::fireTableDataChanged);
+            SwingUtilities.invokeLater(updateTask);
         }
     }
 }
