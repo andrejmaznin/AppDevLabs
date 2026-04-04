@@ -1,41 +1,98 @@
+%%{init: {'theme': 'default', 'themeVariables': { 'background': '#ffffff' }}}%%
 classDiagram
 
     class Mission {
         -missionId: String
-        -date: LocalDate
+        -date: String
         -location: String
         -outcome: String
         -damageCost: long
-        -curse: Curse
         -comment: String
+        -curse: Curse
         -sorcerers: List~Sorcerer~
         -techniques: List~Technique~
-        +validate()
+        -civilianImpact: CivilianImpact
+        -enemyActivity: EnemyActivity
+        -environmentConditions: EnvironmentConditions
+        -economicAssessment: EconomicAssessment
+        -operationTimeline: List~OperationEvent~
+        +getters()
+        +setters()
+        +validate() void
     }
 
     class Curse {
         -name: String
         -threatLevel: String
-        +validate()
+        +getters()
+        +setters()
     }
 
     class Sorcerer {
         -name: String
         -rank: String
-        +validate()
+        +getters()
+        +setters()
     }
 
     class Technique {
         -name: String
         -type: String
-        -owner: Sorcerer
-        -ownerName: String
+        -owner: String
         -damage: int
-        +validate()
+        +getters()
+        +setters()
     }
 
+    class CivilianImpact {
+        -evacuated: Integer
+        -injured: Integer
+        -missing: Integer
+        +getters()
+        +setters()
+    }
 
-    Mission o-- Curse : Содержит
-    Mission o-- Sorcerer : Задействует
-    Mission o-- Technique : Использует
-    Technique *-- Sorcerer : Владеет
+    class EnemyActivity {
+        -behaviorType: String
+        -targetPriority: List~String~
+        -attackPatterns: List~String~
+        -mobility: String
+        -escalationRisk: String
+        +getters()
+        +setters()
+    }
+
+    class EnvironmentConditions {
+        -weather: String
+        -timeOfDay: String
+        -visibility: String
+        +getters()
+        +setters()
+    }
+
+    class OperationEvent {
+        -timestamp: String
+        -type: String
+        -description: String
+        +getters()
+        +setters()
+    }
+
+    class EconomicAssessment {
+        -estimatedDamage: long
+        -compensationPaid: long
+        -budgetImpact: String
+        +getters()
+        +setters()
+    }
+
+%% Реализация связей в коде (через поля классов)
+Mission o-- "0..*" Sorcerer : -sorcerers
+Mission o-- "0..*" Technique : -techniques
+
+Mission *-- "1" Curse : -curse
+Mission *-- "1" CivilianImpact : -civilianImpact
+Mission *-- "1" EnemyActivity : -enemyActivity
+Mission *-- "1" EnvironmentConditions : -environmentConditions
+Mission *-- "1" EconomicAssessment : -economicAssessment
+Mission *-- "0..*" OperationEvent : -operationTimeline

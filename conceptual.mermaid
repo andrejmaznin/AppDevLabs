@@ -1,20 +1,13 @@
----
-config:
-  theme: default
----
-
+%%{init: {'theme': 'default', 'themeVariables': { 'background': '#ffffff' }}}%%
 classDiagram
 
     class Mission {
         -missionId: String
-        -date: Date
+        -date: String
         -location: String
         -outcome: String
         -damageCost: long
-        -curse: Curse
         -comment: String
-        -sorcerers: List~Sorcerer~
-        -techniques: List~Technique~
     }
 
     class Curse {
@@ -30,13 +23,48 @@ classDiagram
     class Technique {
         -name: String
         -type: String
-        -owner: Sorcerer
-        -ownerName: String
+        -owner: String
         -damage: int
     }
 
+    class CivilianImpact {
+        -evacuated: Integer
+        -injured: Integer
+        -missing: Integer
+    }
 
-    Mission o-- Curse : Содержит
-    Mission o-- Sorcerer : Задействует
-    Mission o-- Technique : Использует
-    Technique *-- Sorcerer : Владеет
+    class EnemyActivity {
+        -behaviorType: String
+        -targetPriority: List~String~
+        -attackPatterns: List~String~
+        -mobility: String
+        -escalationRisk: String
+    }
+
+    class EnvironmentConditions {
+        -weather: String
+        -timeOfDay: String
+        -visibility: String
+    }
+
+    class OperationEvent {
+        -timestamp: String
+        -type: String
+        -description: String
+    }
+
+    class EconomicAssessment {
+        -estimatedDamage: long
+        -compensationPaid: long
+        -budgetImpact: String
+    }
+
+Mission o-- "0..*" Sorcerer : Задействует
+Mission o-- "0..*" Technique : Использует
+
+Mission *-- "1" Curse : Содержит проклятие
+Mission *-- "1" CivilianImpact : Оценка последствий
+Mission *-- "1" EnemyActivity : Сведения о враге
+Mission *-- "1" EnvironmentConditions : Условия среды
+Mission *-- "1" EconomicAssessment : Экономика
+Mission *-- "0..*" OperationEvent : Хронология событий (Timeline)
