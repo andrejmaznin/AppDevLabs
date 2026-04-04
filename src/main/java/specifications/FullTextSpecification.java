@@ -1,9 +1,10 @@
 package specifications;
 
 import models.Mission;
-import models.OperationEvent;
-import models.Sorcerer;
-import models.Technique;
+
+import java.lang.reflect.Field;
+import java.util.HashSet;
+import java.util.Set;
 
 public class FullTextSpecification implements MissionSpecification {
     private final String[] tokens;
@@ -23,40 +24,7 @@ public class FullTextSpecification implements MissionSpecification {
 
         StringBuilder sb = new StringBuilder();
 
-        if (mission.getMissionId() != null) sb.append(mission.getMissionId()).append(" ");
-        if (mission.getDate() != null) sb.append(mission.getDate()).append(" ");
-        if (mission.getLocation() != null) sb.append(mission.getLocation()).append(" ");
-        if (mission.getOutcome() != null) sb.append(mission.getOutcome()).append(" ");
-        if (mission.getComment() != null) sb.append(mission.getComment()).append(" ");
-        sb.append(mission.getDamageCost()).append(" ");
-
-        if (mission.getCurse() != null) {
-            if (mission.getCurse().getName() != null) sb.append(mission.getCurse().getName()).append(" ");
-            if (mission.getCurse().getThreatLevel() != null) sb.append(mission.getCurse().getThreatLevel()).append(" ");
-        }
-
-        if (mission.getSorcerers() != null) {
-            for (Sorcerer s : mission.getSorcerers()) {
-                if (s.getName() != null) sb.append(s.getName()).append(" ");
-                if (s.getRank() != null) sb.append(s.getRank()).append(" ");
-            }
-        }
-
-        if (mission.getTechniques() != null) {
-            for (Technique t : mission.getTechniques()) {
-                if (t.getName() != null) sb.append(t.getName()).append(" ");
-                if (t.getType() != null) sb.append(t.getType()).append(" ");
-                if (t.getOwner() != null) sb.append(t.getOwner()).append(" ");
-            }
-        }
-
-        if (mission.getOperationTimeline() != null) {
-            for (OperationEvent e : mission.getOperationTimeline()) {
-                if (e.getTimestamp() != null) sb.append(e.getTimestamp()).append(" ");
-                if (e.getType() != null) sb.append(e.getType()).append(" ");
-                if (e.getDescription() != null) sb.append(e.getDescription()).append(" ");
-            }
-        }
+        extractTextViaReflection(mission, sb, new HashSet<>());
 
         String allText = sb.toString().toLowerCase().replaceAll("[\\p{Punct}]", " ");
 
@@ -66,5 +34,40 @@ public class FullTextSpecification implements MissionSpecification {
             }
         }
         return true;
+    }
+
+    private void extractTextViaReflection(Object obj, StringBuilder sb, Set<Object> visited) {
+        if (obj == null || visited.contains(obj)) {
+            return;
+        }
+
+        if (obj instanceof String || obj instanceof Number || obj instanceof Boolean || obj.getClass().isPrimitive()) {
+            sb.append(obj).append(" ");
+            return;
+        }
+
+        visited.add(obj);
+
+        if (obj instanceof Iterable<?>) {
+            for (Object item : (Iterable<?>) obj) {
+                extractTextViaReflection(item, sb, visited);
+            }
+            return;
+        }
+
+        if (!obj.getClass().getName().startsWith("models")) {
+            return;
+        }
+
+        Field[] fields = obj.getClass().getDeclaredFields();
+        for (Field field : fields) {
+            field.setAccessible(true);
+            try {
+                Object value = field.get(obj);
+                extractTextViaReflection(value, sb, visited);
+            } catch (IllegalAccessException e) {
+                // Если доступ получить не удалось, просто пропускаем поле
+            }
+        }
     }
 }
