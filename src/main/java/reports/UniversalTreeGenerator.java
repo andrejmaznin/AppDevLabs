@@ -12,16 +12,12 @@ public class UniversalTreeGenerator implements ReportGenerator<SmartTreeReport, 
             return new SmartTreeReport(new DefaultMutableTreeNode("Нет данных"));
         }
 
-        // Начинаем строить дерево от корня переданного объекта
         String rootName = anyDataModel.getClass().getSimpleName();
         DefaultMutableTreeNode root = buildTreeNode(anyDataModel, rootName, new IdentityHashMap<>(), 0);
 
         return new SmartTreeReport(root);
     }
 
-    // Тот самый метод на основе рефлексии.
-    // Так как он принимает Object, он сможет разобрать ВСЁ:
-    // и старую Mission, и новую MissionWithEconomy, и массив миссий.
     private DefaultMutableTreeNode buildTreeNode(Object obj, String name, Map<Object, Boolean> visited, int depth) {
         if (depth > 8) return new DefaultMutableTreeNode(name + ": (max depth)");
         if (obj == null) return new DefaultMutableTreeNode(name + ": null");
@@ -31,7 +27,6 @@ public class UniversalTreeGenerator implements ReportGenerator<SmartTreeReport, 
             return new DefaultMutableTreeNode(name + ": " + obj);
         }
 
-        // Защита от циклических ссылок
         if (visited.containsKey(obj)) {
             return new DefaultMutableTreeNode(name + ": (circular)");
         }
@@ -52,7 +47,6 @@ public class UniversalTreeGenerator implements ReportGenerator<SmartTreeReport, 
                 node.add(buildTreeNode(item, "[" + i + "]", visited, depth + 1));
             }
         } else {
-            // Вытягиваем все геттеры динамически!
             Method[] methods = cls.getMethods();
             List<Method> getters = new ArrayList<>();
             for (Method m : methods) {

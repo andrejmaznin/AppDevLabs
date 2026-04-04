@@ -16,11 +16,9 @@ public class BusinessRulesValidator extends AbstractValidator<Mission> {
         }
 
         List<Sorcerer> sorcerers = mission.getSorcerers();
-        // детальная проверка полей Sorcerer теперь в SorcerersValidator
 
         List<Technique> techniques = mission.getTechniques();
-        // детальная проверка полей Technique теперь в TechniquesValidator
-
+        
         if (techniques != null) {
             for (Technique currentTech : techniques) {
                 String techOwner = currentTech != null ? currentTech.getOwner() : null;
