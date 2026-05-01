@@ -5,9 +5,10 @@ import com.intellij.uiDesigner.core.GridLayoutManager;
 import logic.GUIEngine;
 import models.Mission;
 import reports.BasicMissionReport;
-import reports.BasicReportGenerator;
+import reports.BasicReportStrategy;
+import reports.ReportNavigator;
 import reports.SmartTreeReport;
-import reports.UniversalTreeGenerator;
+import reports.TreeReportStrategy;
 import specifications.FullTextSpecification;
 
 import javax.swing.*;
@@ -79,11 +80,14 @@ public class MainFrame {
                 if (e.getClickCount() == 1 && SwingUtilities.isLeftMouseButton(e)) {
                     if (modelCol == 6 || modelCol == 7) {
                         Mission mission = tableModel.getMissionAt(modelRow);
+                        ReportNavigator navigator = new ReportNavigator();
                         if (modelCol == 6) {
-                            BasicMissionReport report = new BasicReportGenerator().generate(mission);
+                            navigator.setStrategy(new BasicReportStrategy());
+                            BasicMissionReport report = (BasicMissionReport) navigator.execute(mission);
                             SwingUtilities.invokeLater(() -> showMissionDetails(report));
                         } else {
-                            SmartTreeReport report = new UniversalTreeGenerator().generate(mission);
+                            navigator.setStrategy(new TreeReportStrategy());
+                            SmartTreeReport report = (SmartTreeReport) navigator.execute(mission);
                             SwingUtilities.invokeLater(() -> SmartMissionFrame.showInFrame(report));
                         }
                     }
