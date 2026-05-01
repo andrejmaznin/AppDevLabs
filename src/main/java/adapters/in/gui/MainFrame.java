@@ -7,7 +7,7 @@ import domain.models.Mission;
 import domain.reports.BasicMissionReport;
 import domain.reports.BasicReportStrategy;
 import domain.reports.ReportNavigator;
-import domain.reports.SmartTreeReport;
+import domain.reports.TreeReport;
 import domain.reports.TreeReportStrategy;
 import domain.specifications.FullTextSpecification;
 
@@ -90,7 +90,7 @@ public class MainFrame {
                             SwingUtilities.invokeLater(() -> showMissionDetails(report));
                         } else {
                             navigator.setStrategy(new TreeReportStrategy());
-                            SmartTreeReport report = (SmartTreeReport) navigator.execute(mission);
+                            TreeReport report = (TreeReport) navigator.execute(mission);
                             SwingUtilities.invokeLater(() -> SmartMissionFrame.showInFrame(report));
                         }
                     }

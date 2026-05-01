@@ -1,6 +1,5 @@
 package domain.reports;
 
-import javax.swing.tree.DefaultMutableTreeNode;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
@@ -8,47 +7,47 @@ import java.util.*;
 public class TreeReportStrategy implements ReportStrategy {
 
     @Override
-    public SmartTreeReport generate(Object anyDataModel) {
+    public TreeReport generate(Object anyDataModel) {
         if (anyDataModel == null) {
-            return new SmartTreeReport(new DefaultMutableTreeNode("Нет данных"));
+            return new TreeReport(new ReportTreeNode("Нет данных"));
         }
 
         String rootName = anyDataModel.getClass().getSimpleName();
-        DefaultMutableTreeNode root = buildTreeNode(anyDataModel, rootName, new IdentityHashMap<>(), 0);
+        ReportTreeNode root = buildTreeNode(anyDataModel, rootName, new IdentityHashMap<>(), 0);
 
-        return new SmartTreeReport(root);
+        return new TreeReport(root);
     }
 
-    private DefaultMutableTreeNode buildTreeNode(Object obj, String name, Map<Object, Boolean> visited, int depth) {
-        if (depth > 8) return new DefaultMutableTreeNode(name + ": (max depth)");
-        if (obj == null) return new DefaultMutableTreeNode(name + ": null");
+    private ReportTreeNode buildTreeNode(Object obj, String name, Map<Object, Boolean> visited, int depth) {
+        if (depth > 8) return new ReportTreeNode(name + ": (max depth)");
+        if (obj == null) return new ReportTreeNode(name + ": null");
 
         Class<?> cls = obj.getClass();
         if (isSimple(cls)) {
-            return new DefaultMutableTreeNode(name + ": " + obj);
+            return new ReportTreeNode(name + ": " + obj);
         }
 
         if (visited.containsKey(obj)) {
-            return new DefaultMutableTreeNode(name + ": (circular)");
+            return new ReportTreeNode(name + ": (circular)");
         }
         visited.put(obj, Boolean.TRUE);
 
-        DefaultMutableTreeNode node = new DefaultMutableTreeNode(name + " (" + cls.getSimpleName() + ")");
+        ReportTreeNode node = new ReportTreeNode(name + " (" + cls.getSimpleName() + ")");
 
         if (obj instanceof Collection) {
             Collection<?> col = (Collection<?>) obj;
-            if (col.isEmpty()) return new DefaultMutableTreeNode(name + ": []");
+            if (col.isEmpty()) return new ReportTreeNode(name + ": []");
             int i = 0;
             for (Object item : col) {
-                node.add(buildTreeNode(item, "[" + i + "]", visited, depth + 1));
+                node.addChild(buildTreeNode(item, "[" + i + "]", visited, depth + 1));
                 i++;
             }
         } else if (obj.getClass().isArray()) {
             int len = java.lang.reflect.Array.getLength(obj);
-            if (len == 0) return new DefaultMutableTreeNode(name + ": []");
+            if (len == 0) return new ReportTreeNode(name + ": []");
             for (int i = 0; i < len; i++) {
                 Object item = java.lang.reflect.Array.get(obj, i);
-                node.add(buildTreeNode(item, "[" + i + "]", visited, depth + 1));
+                node.addChild(buildTreeNode(item, "[" + i + "]", visited, depth + 1));
             }
         } else {
             Method[] methods = cls.getMethods();
@@ -68,18 +67,17 @@ public class TreeReportStrategy implements ReportStrategy {
             for (Method g : getters) {
                 try {
                     Object val = g.invoke(obj);
-                    if (val == null) continue; // Пропускаем null для чистоты отчета
+                    if (val == null) continue;
                     
                     String propName = nameFromGetter(g.getName());
-                    node.add(buildTreeNode(val, propName, visited, depth + 1));
+                    node.addChild(buildTreeNode(val, propName, visited, depth + 1));
                     hasChildren = true;
                 } catch (Exception e) {
-                    // Игнорируем ошибки вызова
                 }
             }
             
             if (!hasChildren) {
-                return new DefaultMutableTreeNode(name + ": {}");
+                return new ReportTreeNode(name + ": {}");
             }
         }
 
