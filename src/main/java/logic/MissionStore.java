@@ -11,33 +11,41 @@ import java.util.stream.Collectors;
 
 
 public class MissionStore {
-    private final List<Mission> missions = new ArrayList<>();
+    private final MissionRepository repository;
     private final CopyOnWriteArrayList<MissionStoreListener> listeners = new CopyOnWriteArrayList<>();
+
+    public MissionStore() {
+        this(new InMemoryMissionRepository());
+    }
+
+    public MissionStore(MissionRepository repository) {
+        this.repository = repository != null ? repository : new InMemoryMissionRepository();
+    }
 
     public synchronized void add(Mission mission) {
         if (mission == null) {
             throw new IllegalArgumentException("Миссия не может быть null");
         }
-        missions.add(mission);
+        repository.save(mission);
         notifyListeners();
     }
 
     public synchronized List<Mission> getAll() {
-        return new ArrayList<>(missions);
+        return repository.findAll();
     }
 
 
     public synchronized void clear() {
-        missions.clear();
+        repository.deleteAll();
         notifyListeners();
     }
 
     public synchronized Mission get(int index) {
-        return missions.get(index);
+        return repository.findAll().get(index);
     }
 
     public synchronized int size() {
-        return missions.size();
+        return repository.findAll().size();
     }
 
     public void addListener(MissionStoreListener listener) {
@@ -62,16 +70,16 @@ public class MissionStore {
     }
 
     public synchronized List<Mission> find(MissionSpecification specification) {
+        List<Mission> all = repository.findAll();
         if (specification == null) {
-            return new ArrayList<>(missions);
+            return new ArrayList<>(all);
         }
-        return missions.stream()
+        return all.stream()
             .filter(specification::isSatisfiedBy)
             .collect(Collectors.toList());
     }
 
     public synchronized Optional<Mission> findById(String id) {
-        List<Mission> result = find(new specifications.MissionIdSpecification(id));
-        return result.isEmpty() ? Optional.empty() : Optional.of(result.getFirst());
+        return repository.findById(id);
     }
 }
