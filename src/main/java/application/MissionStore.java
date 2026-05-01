@@ -13,16 +13,15 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class MissionStore {
     private final MissionRepository repository;
     private final CopyOnWriteArrayList<MissionStoreListener> listeners = new CopyOnWriteArrayList<>();
 
-    public MissionStore() {
-        this(new InMemoryMissionRepository());
-    }
-
     public MissionStore(MissionRepository repository) {
-        this.repository = repository != null ? repository : new InMemoryMissionRepository();
+        this.repository = repository;
     }
 
     public synchronized void add(Mission mission) {
@@ -30,6 +29,14 @@ public class MissionStore {
             throw new IllegalArgumentException("Миссия не может быть null");
         }
         repository.save(mission);
+        notifyListeners();
+    }
+
+    public synchronized void addAll(List<Mission> missions) {
+        if (missions == null || missions.isEmpty()) {
+            return;
+        }
+        repository.saveAll(missions);
         notifyListeners();
     }
 

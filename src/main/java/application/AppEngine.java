@@ -9,15 +9,14 @@ import java.io.File;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.stereotype.Service;
+
+@Service
 public class AppEngine implements MissionUseCase {
     private final MissionStore store;
 
-    public AppEngine() {
-        this(new MissionStore());
-    }
-
     public AppEngine(MissionStore store) {
-        this.store = store == null ? new MissionStore() : store;
+        this.store = store;
     }
 
     @Override
@@ -31,9 +30,7 @@ public class AppEngine implements MissionUseCase {
             throw new IllegalArgumentException("Источник данных не может быть null");
         }
         List<Mission> missions = source.loadMissions();
-        for (Mission mission : missions) {
-            store.add(mission);
-        }
+        store.addAll(missions);
     }
 
     @Override

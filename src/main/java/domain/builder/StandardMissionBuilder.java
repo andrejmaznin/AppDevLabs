@@ -27,6 +27,12 @@ public class StandardMissionBuilder implements MissionBuilder {
     private domain.models.EnemyActivity enemyActivity;
     private domain.models.EnvironmentConditions environmentConditions;
     private List<domain.models.OperationEvent> operationTimeline;
+    private List<String> operationTags;
+    private List<String> supportUnits;
+    private List<String> recommendations;
+    private List<String> artifactsRecovered;
+    private List<String> evacuationZones;
+    private List<String> statusEffects;
 
 
     @Override
@@ -142,6 +148,54 @@ public class StandardMissionBuilder implements MissionBuilder {
     }
 
     @Override
+    @JacksonXmlElementWrapper(localName = "operationTags")
+    @JacksonXmlProperty(localName = "tag")
+    public MissionBuilder setOperationTags(List<String> tags) {
+        this.operationTags = tags;
+        return this;
+    }
+
+    @Override
+    @JacksonXmlElementWrapper(localName = "supportUnits")
+    @JacksonXmlProperty(localName = "unit")
+    public MissionBuilder setSupportUnits(List<String> units) {
+        this.supportUnits = units;
+        return this;
+    }
+
+    @Override
+    @JacksonXmlElementWrapper(localName = "recommendations")
+    @JacksonXmlProperty(localName = "recommendation")
+    public MissionBuilder setRecommendations(List<String> recommendations) {
+        this.recommendations = recommendations;
+        return this;
+    }
+
+    @Override
+    @JacksonXmlElementWrapper(localName = "artifactsRecovered")
+    @JacksonXmlProperty(localName = "artifact")
+    public MissionBuilder setArtifactsRecovered(List<String> artifacts) {
+        this.artifactsRecovered = artifacts;
+        return this;
+    }
+
+    @Override
+    @JacksonXmlElementWrapper(localName = "evacuationZones")
+    @JacksonXmlProperty(localName = "zone")
+    public MissionBuilder setEvacuationZones(List<String> zones) {
+        this.evacuationZones = zones;
+        return this;
+    }
+
+    @Override
+    @JacksonXmlElementWrapper(localName = "statusEffects")
+    @JacksonXmlProperty(localName = "effect")
+    public MissionBuilder setStatusEffects(List<String> effects) {
+        this.statusEffects = effects;
+        return this;
+    }
+
+    @Override
     public Mission build() {
         if (!this.techniques.isEmpty()) {
             for (Technique tech : this.techniques) {
@@ -175,6 +229,12 @@ public class StandardMissionBuilder implements MissionBuilder {
         mission.setEnemyActivity(this.enemyActivity);
         mission.setEnvironmentConditions(this.environmentConditions);
         mission.setOperationTimeline(this.operationTimeline);
+        mission.setOperationTags(this.operationTags);
+        mission.setSupportUnits(this.supportUnits);
+        mission.setRecommendations(this.recommendations);
+        mission.setArtifactsRecovered(this.artifactsRecovered);
+        mission.setEvacuationZones(this.evacuationZones);
+        mission.setStatusEffects(this.statusEffects);
 
         mission.validate();
 

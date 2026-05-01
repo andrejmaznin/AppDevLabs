@@ -6,6 +6,7 @@ public class EnemyActivity {
     private String behaviorType;
     private List<String> targetPriority;
     private List<String> attackPatterns;
+    private List<String> countermeasuresUsed;
     private String mobility;
     private String escalationRisk;
 
@@ -31,6 +32,14 @@ public class EnemyActivity {
 
     public void setAttackPatterns(List<String> attackPatterns) {
         this.attackPatterns = attackPatterns;
+    }
+
+    public List<String> getCountermeasuresUsed() {
+        return countermeasuresUsed;
+    }
+
+    public void setCountermeasuresUsed(List<String> countermeasuresUsed) {
+        this.countermeasuresUsed = countermeasuresUsed;
     }
 
     public String getMobility() {

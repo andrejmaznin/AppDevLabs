@@ -42,5 +42,17 @@ public interface MissionBuilder {
 
     MissionBuilder setOperationTimeline(List<domain.models.OperationEvent> operationTimeline);
 
+    MissionBuilder setOperationTags(List<String> tags);
+
+    MissionBuilder setSupportUnits(List<String> units);
+
+    MissionBuilder setRecommendations(List<String> recommendations);
+
+    MissionBuilder setArtifactsRecovered(List<String> artifacts);
+
+    MissionBuilder setEvacuationZones(List<String> zones);
+
+    MissionBuilder setStatusEffects(List<String> effects);
+
     Mission build();
 }

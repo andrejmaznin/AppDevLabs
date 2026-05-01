@@ -2,6 +2,7 @@ package domain.reports;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.*;
 
 public class TreeReportStrategy implements ReportStrategy {
@@ -35,13 +36,16 @@ public class TreeReportStrategy implements ReportStrategy {
         DefaultMutableTreeNode node = new DefaultMutableTreeNode(name + " (" + cls.getSimpleName() + ")");
 
         if (obj instanceof Collection) {
+            Collection<?> col = (Collection<?>) obj;
+            if (col.isEmpty()) return new DefaultMutableTreeNode(name + ": []");
             int i = 0;
-            for (Object item : (Collection<?>) obj) {
+            for (Object item : col) {
                 node.add(buildTreeNode(item, "[" + i + "]", visited, depth + 1));
                 i++;
             }
         } else if (obj.getClass().isArray()) {
             int len = java.lang.reflect.Array.getLength(obj);
+            if (len == 0) return new DefaultMutableTreeNode(name + ": []");
             for (int i = 0; i < len; i++) {
                 Object item = java.lang.reflect.Array.get(obj, i);
                 node.add(buildTreeNode(item, "[" + i + "]", visited, depth + 1));
@@ -50,22 +54,32 @@ public class TreeReportStrategy implements ReportStrategy {
             Method[] methods = cls.getMethods();
             List<Method> getters = new ArrayList<>();
             for (Method m : methods) {
-                if (m.getParameterCount() == 0) {
+                if (m.getParameterCount() == 0 && !Modifier.isStatic(m.getModifiers())) {
                     String n = m.getName();
-                    if ((n.startsWith("get") && !n.equals("getClass")) || n.startsWith("is")) {
+                    if (((n.startsWith("get") && n.length() > 3) || (n.startsWith("is") && n.length() > 2)) 
+                        && !n.equals("getClass") && !n.equals("getDeclaringClass")) {
                         getters.add(m);
                     }
                 }
             }
             getters.sort(Comparator.comparing(Method::getName));
+            
+            boolean hasChildren = false;
             for (Method g : getters) {
                 try {
                     Object val = g.invoke(obj);
+                    if (val == null) continue; // Пропускаем null для чистоты отчета
+                    
                     String propName = nameFromGetter(g.getName());
                     node.add(buildTreeNode(val, propName, visited, depth + 1));
+                    hasChildren = true;
                 } catch (Exception e) {
-                    node.add(new DefaultMutableTreeNode(g.getName() + ": (error)"));
+                    // Игнорируем ошибки вызова
                 }
+            }
+            
+            if (!hasChildren) {
+                return new DefaultMutableTreeNode(name + ": {}");
             }
         }
 
