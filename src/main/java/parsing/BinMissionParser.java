@@ -1,5 +1,7 @@
 package parsing;
 
+import builder.MissionBuildDirector;
+import builder.MissionData;
 import builder.StandardMissionBuilder;
 import models.*;
 
@@ -10,7 +12,7 @@ public class BinMissionParser implements MissionParser {
 
     @Override
     public Mission parse(String data) {
-        StandardMissionBuilder builder = new StandardMissionBuilder();
+        MissionData missionData = new MissionData();
 
         if (data.startsWith("\uFEFF")) {
             data = data.substring(1);
@@ -32,18 +34,19 @@ public class BinMissionParser implements MissionParser {
             try {
                 switch (command) {
                     case "MISSION_CREATED":
-                        builder.setMissionId(parts[1].trim());
-                        builder.setDate(parts[2].trim());
-                        builder.setLocation(parts[3].trim());
+                        missionData.missionId = parts[1].trim();
+                        missionData.date = parts[2].trim();
+                        missionData.location = parts[3].trim();
                         break;
                     case "CURSE_DETECTED":
-                        builder.setCurseDetails(parts[1].trim(), parts[2].trim());
+                        missionData.curseName = parts[1].trim();
+                        missionData.curseThreatLevel = parts[2].trim();
                         break;
                     case "SORCERER_ASSIGNED":
                         Sorcerer s = new Sorcerer();
                         s.setName(parts[1].trim());
                         s.setRank(parts[2].trim());
-                        builder.addSorcerer(s);
+                        missionData.sorcerers.add(s);
                         break;
                     case "TECHNIQUE_USED":
                         Technique t = new Technique();
@@ -51,7 +54,7 @@ public class BinMissionParser implements MissionParser {
                         t.setType(parts[2].trim());
                         t.setOwner(parts[3].trim());
                         t.setDamage(Integer.parseInt(parts[4].trim()));
-                        builder.addTechnique(t);
+                        missionData.techniques.add(t);
                         break;
                     case "TIMELINE_EVENT":
                         OperationEvent ev = new OperationEvent();
@@ -77,14 +80,14 @@ public class BinMissionParser implements MissionParser {
                                 else if (key.equals("missing")) civilianImpact.setMissing(val);
                             }
                         }
-                        builder.setCivilianImpact(civilianImpact);
+                        missionData.civilianImpact = civilianImpact;
                         break;
                     case "MISSION_RESULT":
-                        builder.setOutcome(parts[1].trim());
+                        missionData.outcome = parts[1].trim();
                         if (parts.length > 2) {
                             String[] dmg = parts[2].split("=");
                             if (dmg.length == 2 && dmg[0].trim().equals("damageCost")) {
-                                builder.setDamageCost(Long.parseLong(dmg[1].trim()));
+                                missionData.damageCost = Long.parseLong(dmg[1].trim());
                             }
                         }
                         break;
@@ -96,12 +99,13 @@ public class BinMissionParser implements MissionParser {
 
         if (!attackPatterns.isEmpty()) {
             enemyActivity.setAttackPatterns(attackPatterns);
-            builder.setEnemyActivity(enemyActivity);
+            missionData.enemyActivity = enemyActivity;
         }
         if (!timeline.isEmpty()) {
-            builder.setOperationTimeline(timeline);
+            missionData.operationTimeline = timeline;
         }
 
-        return builder.build();
+        MissionBuildDirector director = new MissionBuildDirector(new StandardMissionBuilder());
+        return director.construct(missionData);
     }
 }

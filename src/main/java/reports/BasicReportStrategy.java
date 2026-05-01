@@ -9,10 +9,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class BasicReportGenerator implements ReportGenerator<BasicMissionReport, Mission> {
+public class BasicReportStrategy implements ReportStrategy {
 
     @Override
-    public BasicMissionReport generate(Mission mission) {
+    public BasicMissionReport generate(Object data) {
+        if (!(data instanceof Mission)) {
+            throw new IllegalArgumentException("BasicReportStrategy requires a Mission object");
+        }
+        Mission mission = (Mission) data;
+        
         String curseName = mission.getCurse() != null && mission.getCurse().getName() != null ? mission.getCurse().getName() : "—";
         String curseLevel = mission.getCurse() != null && mission.getCurse().getThreatLevel() != null ? mission.getCurse().getThreatLevel() : "—";
         String comment = mission.getComment() != null ? mission.getComment() : "—";

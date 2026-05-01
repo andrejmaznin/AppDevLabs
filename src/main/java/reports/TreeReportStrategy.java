@@ -4,7 +4,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import java.lang.reflect.Method;
 import java.util.*;
 
-public class UniversalTreeGenerator implements ReportGenerator<SmartTreeReport, Object> {
+public class TreeReportStrategy implements ReportStrategy {
 
     @Override
     public SmartTreeReport generate(Object anyDataModel) {

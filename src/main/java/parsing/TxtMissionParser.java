@@ -1,5 +1,7 @@
 package parsing;
 
+import builder.MissionBuildDirector;
+import builder.MissionData;
 import builder.StandardMissionBuilder;
 import models.EnvironmentConditions;
 import models.Mission;
@@ -10,7 +12,7 @@ public class TxtMissionParser implements MissionParser {
 
     @Override
     public Mission parse(String data) {
-        StandardMissionBuilder builder = new StandardMissionBuilder();
+        MissionData missionData = new MissionData();
         String[] lines = data.split("\\r?\\n");
 
         String currentSection = "";
@@ -27,13 +29,13 @@ public class TxtMissionParser implements MissionParser {
 
                 if (currentSection.equals("SORCERER")) {
                     currentSorcerer = new Sorcerer();
-                    builder.addSorcerer(currentSorcerer);
+                    missionData.sorcerers.add(currentSorcerer);
                 } else if (currentSection.equals("TECHNIQUE")) {
                     currentTechnique = new Technique();
-                    builder.addTechnique(currentTechnique);
+                    missionData.techniques.add(currentTechnique);
                 } else if (currentSection.equals("ENVIRONMENT")) {
                     env = new EnvironmentConditions();
-                    builder.setEnvironmentConditions(env);
+                    missionData.environmentConditions = env;
                 }
                 continue;
             }
@@ -45,15 +47,15 @@ public class TxtMissionParser implements MissionParser {
 
             switch (currentSection) {
                 case "MISSION":
-                    if (key.equals("missionId")) builder.setMissionId(value);
-                    else if (key.equals("date")) builder.setDate(value);
-                    else if (key.equals("location")) builder.setLocation(value);
-                    else if (key.equals("outcome")) builder.setOutcome(value);
-                    else if (key.equals("damageCost")) builder.setDamageCost(Long.parseLong(value));
+                    if (key.equals("missionId")) missionData.missionId = value;
+                    else if (key.equals("date")) missionData.date = value;
+                    else if (key.equals("location")) missionData.location = value;
+                    else if (key.equals("outcome")) missionData.outcome = value;
+                    else if (key.equals("damageCost")) missionData.damageCost = Long.parseLong(value);
                     break;
                 case "CURSE":
-                    if (key.equals("name")) builder.setCurseDetails(value, null);
-                    else if (key.equals("threatLevel")) builder.setCurseDetails(null, value);
+                    if (key.equals("name")) missionData.curseName = value;
+                    else if (key.equals("threatLevel")) missionData.curseThreatLevel = value;
                     break;
                 case "SORCERER":
                     if (currentSorcerer != null) {
@@ -81,6 +83,7 @@ public class TxtMissionParser implements MissionParser {
             }
         }
 
-        return builder.build();
+        MissionBuildDirector director = new MissionBuildDirector(new StandardMissionBuilder());
+        return director.construct(missionData);
     }
 }
