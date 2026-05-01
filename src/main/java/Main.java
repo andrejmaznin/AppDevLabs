@@ -1,4 +1,4 @@
-import gui.MainFrame;
+import adapters.in.gui.MainFrame;
 
 import javax.swing.SwingUtilities;
 
