@@ -24,22 +24,18 @@ public class GUIEngine {
         return store;
     }
 
-    public void importMission(File file) throws Exception {
-        if (file == null || !file.exists()) {
-            throw new IllegalArgumentException("Файл не выбран или не существует.");
+    public void importMissions(io.MissionSource source) throws Exception {
+        if (source == null) {
+            throw new IllegalArgumentException("Источник данных не может быть null");
         }
-
-        String content = Files.readString(file.toPath());
-
-        MissionParser parser = MissionParserFactory.getParserByFileName(file.getName());
-
-        Mission mission = parser.parse(content);
-
-        if (mission != null) {
+        List<Mission> missions = source.loadMissions();
+        for (Mission mission : missions) {
             store.add(mission);
-        } else {
-            throw new Exception("Не удалось распарсить файл: " + file.getName());
         }
+    }
+
+    public void importMission(File file) throws Exception {
+        importMissions(new io.FileMissionSource(file));
     }
 
 
