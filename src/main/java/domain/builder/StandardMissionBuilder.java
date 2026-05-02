@@ -7,12 +7,16 @@ import domain.models.Curse;
 import domain.models.Mission;
 import domain.models.Sorcerer;
 import domain.models.Technique;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @JsonPOJOBuilder(withPrefix = "set")
 public class StandardMissionBuilder implements MissionBuilder {
+    private static final Logger logger = LoggerFactory.getLogger(StandardMissionBuilder.class);
+
     private String missionId;
     private String date;
     private String location;
@@ -33,7 +37,6 @@ public class StandardMissionBuilder implements MissionBuilder {
     private List<String> artifactsRecovered;
     private List<String> evacuationZones;
     private List<String> statusEffects;
-
 
     @Override
     public MissionBuilder setMissionId(String id) {
@@ -197,6 +200,8 @@ public class StandardMissionBuilder implements MissionBuilder {
 
     @Override
     public Mission build() {
+        logger.debug("Начало сборки объекта Mission: ID={}", missionId);
+        
         if (!this.techniques.isEmpty()) {
             for (Technique tech : this.techniques) {
                 String ownerName = tech.getOwner();
@@ -205,6 +210,7 @@ public class StandardMissionBuilder implements MissionBuilder {
                         .anyMatch(s -> s.getName() != null && s.getName().trim().equalsIgnoreCase(ownerName.trim()));
 
                     if (!isSorcererPresent) {
+                        logger.info("Маг '{}' автоматически добавлен на основе использованной техники '{}'", ownerName.trim(), tech.getName());
                         Sorcerer autoAddedSorcerer = new Sorcerer();
                         autoAddedSorcerer.setName(ownerName.trim());
                         autoAddedSorcerer.setRank("НЕИЗВЕСТНО");
@@ -222,8 +228,8 @@ public class StandardMissionBuilder implements MissionBuilder {
         mission.setDamageCost(this.damageCost);
         mission.setComment(this.comment);
         mission.setCurse(this.curse);
-        mission.setSorcerers(this.sorcerers);
-        mission.setTechniques(this.techniques);
+        mission.setSorcerers(new ArrayList<>(this.sorcerers));
+        mission.setTechniques(new ArrayList<>(this.techniques));
         mission.setEconomicAssessment(this.economicAssessment);
         mission.setCivilianImpact(this.civilianImpact);
         mission.setEnemyActivity(this.enemyActivity);
@@ -236,7 +242,13 @@ public class StandardMissionBuilder implements MissionBuilder {
         mission.setEvacuationZones(this.evacuationZones);
         mission.setStatusEffects(this.statusEffects);
 
-        mission.validate();
+        try {
+            mission.validate();
+            logger.debug("Валидация миссии {} пройдена успешно", missionId);
+        } catch (Exception e) {
+            logger.warn("Валидация миссии {} провалена: {}", missionId, e.getMessage());
+            throw e;
+        }
 
         return mission;
     }
