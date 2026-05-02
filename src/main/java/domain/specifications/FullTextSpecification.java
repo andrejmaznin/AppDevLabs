@@ -55,7 +55,7 @@ public class FullTextSpecification implements MissionSpecification {
             return;
         }
 
-        if (!obj.getClass().getName().startsWith("models")) {
+        if (!obj.getClass().getName().startsWith("domain.models")) {
             return;
         }
 

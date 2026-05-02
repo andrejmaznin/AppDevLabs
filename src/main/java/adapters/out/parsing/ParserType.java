@@ -3,16 +3,16 @@ package adapters.out.parsing;
 import java.util.Locale;
 
 public enum ParserType {
-    JSON("json"), XML("xml"), TXT("txt"), YAML("yaml"), BIN("");
+    JSON("json"), XML("xml"), TXT("txt"), YAML("yaml", "yml"), BIN("", "bin");
 
-    private final String extension;
+    private final String[] extensions;
 
-    ParserType(String extension) {
-        this.extension = extension;
+    ParserType(String... extensions) {
+        this.extensions = extensions;
     }
 
-    public String getExtension() {
-        return extension;
+    public String[] getExtensions() {
+        return extensions;
     }
 
     public static ParserType fromExtension(String ext) {
@@ -20,7 +20,9 @@ public enum ParserType {
 
         String e = ext.toLowerCase(Locale.ROOT);
         for (ParserType p : values()) {
-            if (p.getExtension().equals(e)) return p;
+            for (String pExt : p.extensions) {
+                if (pExt.equals(e)) return p;
+            }
         }
         return null;
     }
