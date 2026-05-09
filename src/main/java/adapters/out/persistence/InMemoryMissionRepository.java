@@ -1,7 +1,7 @@
 package adapters.out.persistence;
 
 import domain.models.Mission;
-import application.ports.out.MissionRepository;
+import ports.out.MissionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

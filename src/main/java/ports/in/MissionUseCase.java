@@ -1,8 +1,8 @@
-package application.ports.in;
+package ports.in;
 
 import domain.models.Mission;
 import application.MissionStore;
-import application.ports.out.MissionSource;
+import ports.out.MissionSource;
 
 import java.io.File;
 import java.util.List;

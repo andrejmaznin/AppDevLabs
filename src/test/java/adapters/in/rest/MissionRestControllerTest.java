@@ -1,7 +1,7 @@
 package adapters.in.rest;
 
 import application.MissionStore;
-import application.ports.in.MissionUseCase;
+import ports.in.MissionUseCase;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import domain.models.Curse;
 import domain.models.Mission;

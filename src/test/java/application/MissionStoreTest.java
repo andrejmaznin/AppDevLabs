@@ -1,7 +1,7 @@
 package application;
 
-import application.ports.in.MissionStoreListener;
-import application.ports.out.MissionRepository;
+import ports.in.MissionStoreListener;
+import ports.out.MissionRepository;
 import domain.models.Mission;
 import domain.specifications.MissionSpecification;
 import org.junit.jupiter.api.BeforeEach;

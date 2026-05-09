@@ -1,7 +1,7 @@
 package adapters.in.gui;
 
 import application.MissionStore;
-import application.ports.in.MissionStoreListener;
+import ports.in.MissionStoreListener;
 import domain.models.Mission;
 import domain.specifications.MissionSpecification;
 

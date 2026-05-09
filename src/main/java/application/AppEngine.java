@@ -1,8 +1,8 @@
 package application;
 
 import domain.models.Mission;
-import application.ports.in.MissionUseCase;
-import application.ports.out.MissionSource;
+import ports.in.MissionUseCase;
+import ports.out.MissionSource;
 import adapters.out.io.FileMissionSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

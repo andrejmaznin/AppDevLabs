@@ -2,7 +2,7 @@ package adapters.in.gui;
 
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
-import application.ports.in.MissionUseCase;
+import ports.in.MissionUseCase;
 import domain.models.Mission;
 import domain.reports.BasicMissionReport;
 import domain.reports.BasicReportStrategy;

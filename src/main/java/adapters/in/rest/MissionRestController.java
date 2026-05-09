@@ -1,6 +1,6 @@
 package adapters.in.rest;
 
-import application.ports.in.MissionUseCase;
+import ports.in.MissionUseCase;
 import domain.models.Mission;
 import domain.reports.*;
 import domain.specifications.FullTextSpecification;

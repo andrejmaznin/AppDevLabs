@@ -1,6 +1,6 @@
 package application;
 
-import application.ports.out.MissionSource;
+import ports.out.MissionSource;
 import domain.models.Mission;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,7 +9,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;

@@ -1,6 +1,6 @@
 package adapters.out.persistence;
 
-import application.ports.out.MissionRepository;
+import ports.out.MissionRepository;
 import domain.models.Mission;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;

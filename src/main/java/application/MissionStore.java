@@ -2,8 +2,8 @@ package application;
 
 import domain.models.Mission;
 import domain.specifications.MissionSpecification;
-import application.ports.out.MissionRepository;
-import application.ports.in.MissionStoreListener;
+import ports.out.MissionRepository;
+import ports.in.MissionStoreListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

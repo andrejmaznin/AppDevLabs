@@ -1,4 +1,4 @@
-package application.ports.out;
+package ports.out;
 
 import domain.models.Mission;
 

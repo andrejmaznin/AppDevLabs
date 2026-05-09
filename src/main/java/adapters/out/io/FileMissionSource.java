@@ -3,14 +3,13 @@ package adapters.out.io;
 import domain.models.Mission;
 import adapters.out.parsing.MissionParser;
 import adapters.out.parsing.MissionParserFactory;
-import application.ports.out.MissionSource;
+import ports.out.MissionSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.nio.file.Files;
-import java.util.Collections;
 import java.util.List;
 
 public class FileMissionSource implements MissionSource {
