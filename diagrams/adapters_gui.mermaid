@@ -1,0 +1,83 @@
+classDiagram
+    direction TB
+
+    class MainFrame {
+        -MissionUseCase engine
+        -MissionTableModel tableModel
+        -JTable missionsTable
+        -JPanel Main
+        -JButton importButton
+        -JTextField searchField
+        +MainFrame(MissionUseCase)
+        -applySearch() void
+        -showMissionDetails(BasicMissionReport) void
+        +getMainPanel() JPanel
+        -$$$setupUI$$$() void
+    }
+
+    class MissionFrame {
+        -JPanel Main
+        -JTextField idValue
+        -JTextField dateValue
+        -JTextField locationValue
+        -JTextField resultValue
+        -JTextField damageValue
+        -JTextField commentValue
+        -JTextField curseNameValue
+        -JTextField curseLevelValue
+        -JTextField envValue
+        -JTextField civValue
+        -JTextField enemyValue
+        -JList~String~ sorcerersList
+        -JList~String~ techniquesList
+        -JList~String~ timelineList
+        -JTabbedPane tabbedPane
+        +MissionFrame(BasicMissionReport)
+        -displayReport(BasicMissionReport) void
+        +getMainPanel() JPanel
+        -$$$setupUI$$$() void
+    }
+
+    class MissionTableModel {
+        -String[] columnNames
+        -MissionStore store
+        -List~Mission~ displayList
+        -MissionSpecification currentFilter
+        +MissionTableModel(MissionStore)
+        +setFilter(MissionSpecification) void
+        -updateData() void
+        +getRowCount() int
+        +getColumnCount() int
+        +getColumnName(int) String
+        +getValueAt(int, int) Object
+        +getMissionAt(int) Mission
+        +onStoreChanged() void
+    }
+
+    class SmartMissionFrame {
+        -JPanel mainPanel
+        -JTree tree
+        +SmartMissionFrame(TreeReport)
+        -convertToSwingNode(ReportTreeNode) DefaultMutableTreeNode
+        +getMainPanel() JPanel
+        +showInFrame(TreeReport) void
+    }
+
+    class SmartTreeRenderer {
+        +SmartTreeRenderer()
+        +getTreeCellRendererComponent(...) Component
+    }
+
+    %% Relationships
+    MainFrame "1" o-- "1" MissionUseCase
+    MainFrame "1" o-- "1" MissionTableModel
+    MainFrame ..> MissionFrame : creates
+    MainFrame ..> SmartMissionFrame : creates
+    MissionFrame ..> BasicMissionReport : uses
+    MissionTableModel ..> MissionStore : uses
+    MissionTableModel ..> Mission : uses
+    SmartMissionFrame ..> TreeReport : uses
+    SmartMissionFrame "1" *-- "1" SmartTreeRenderer
+    MissionTableModel <|-- AbstractTableModel
+    MissionTableModel ..|> MissionStoreListener
+    SmartTreeRenderer --|> DefaultTreeCellRenderer

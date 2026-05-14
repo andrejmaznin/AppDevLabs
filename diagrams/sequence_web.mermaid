@@ -1,0 +1,44 @@
+sequenceDiagram
+    actor User as Пользователь
+    participant Browser as Browser (JS Fetch)
+    participant REST as MissionRestController (Inbound Adapter)
+    participant UC as AppEngine (Application Core)
+    participant Store as MissionStore (Domain Core)
+    participant Repo as MissionRepository (Outbound Port)
+    participant DB as PostgreSQL (Database)
+
+    Note over User, DB: Сценарий: Поиск миссий через Web-интерфейс
+    
+    User->>Browser: Вводит текст в строку поиска
+    Browser->>REST: GET /api/missions?search="..."
+    activate REST
+    
+    REST->>UC: getStore().find(specification)
+    activate UC
+    
+    UC->>Store: find(FullTextSpecification)
+    activate Store
+    
+    Store->>Repo: findAll()
+    activate Repo
+    Repo->>DB: SELECT * FROM missions
+    activate DB
+    DB-->>Repo: ResultSet / Data
+    deactivate DB
+    Repo-->>Store: List<Mission>
+    deactivate Repo
+    
+    Store->>Store: Business Logic: Stream Filter (Specification)
+    
+    Store-->>UC: filteredList
+    deactivate Store
+    
+    UC-->>REST: filteredList
+    deactivate UC
+    
+    REST->>REST: Jackson Serialization (Object -> JSON)
+    REST-->>Browser: 200 OK (JSON Array)
+    deactivate REST
+    
+    Browser->>Browser: Update DOM (table)
+    Browser-->>User: Обновление списка миссий на странице

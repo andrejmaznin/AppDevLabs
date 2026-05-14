@@ -1,0 +1,59 @@
+classDiagram
+    direction TB
+
+    class MissionParser {
+        <<interface>>
+        +parse(String) Mission
+    }
+
+    class MissionParserFactory {
+        -Map~ParserType, Supplier~MissionParser~~ registry
+        +register(ParserType, Supplier~MissionParser~) void
+        +getParserByFileName(String) MissionParser
+        +getParser(ParserType) MissionParser
+        -extractExtension(String) String
+    }
+
+    class ParserType {
+        <<enumeration>>
+        JSON
+        XML
+        TXT
+        YAML
+        BIN
+        +fromExtension(String) ParserType
+    }
+
+    class BinMissionParser {
+        +parse(String) Mission
+    }
+
+    class JsonMissionParser {
+        +parse(String) Mission
+    }
+
+    class TxtMissionParser {
+        +parse(String) Mission
+    }
+
+    class XmlMissionParser {
+        +parse(String) Mission
+    }
+
+    class YamlMissionParser {
+        +parse(String) Mission
+    }
+
+    %% Relationships
+    MissionParser <|.. BinMissionParser
+    MissionParser <|.. JsonMissionParser
+    MissionParser <|.. TxtMissionParser
+    MissionParser <|.. XmlMissionParser
+    MissionParser <|.. YamlMissionParser
+    MissionParserFactory ..> MissionParser : creates
+    MissionParserFactory ..> ParserType : uses
+    MissionParserFactory ..> BinMissionParser : creates
+    MissionParserFactory ..> JsonMissionParser : creates
+    MissionParserFactory ..> TxtMissionParser : creates
+    MissionParserFactory ..> XmlMissionParser : creates
+    MissionParserFactory ..> YamlMissionParser : creates

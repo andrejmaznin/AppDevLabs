@@ -1,0 +1,47 @@
+classDiagram
+    direction TB
+
+    namespace in {
+        class MissionUseCase {
+            <<interface>>
+            +importMissions(MissionSource) void
+            +importMission(File) void
+            +getAllMissions() List~Mission~
+            +findMissionById(String) Optional~Mission~
+            +clearMissions() void
+            +getStore() MissionStore
+        }
+        class MissionStoreListener {
+            <<interface>>
+            +onStoreChanged() void
+        }
+    }
+
+    namespace out {
+        class MissionRepository {
+            <<interface>>
+            +save(Mission) void
+            +saveAll(List~Mission~) void
+            +findAll() List~Mission~
+            +findById(String) Optional~Mission~
+            +deleteAll() void
+            +deleteById(String) void
+        }
+        class MissionSource {
+            <<interface>>
+            +loadMissions() List~Mission~
+        }
+    }
+
+    %% Context classes
+    class Mission
+    class MissionStore
+    class File
+    class List~T~
+    class Optional~T~
+
+    %% Relationships
+    MissionUseCase ..> MissionSource : uses
+    MissionUseCase ..> MissionStore : returns
+    MissionRepository ..> Mission : uses
+    MissionSource ..> Mission : returns

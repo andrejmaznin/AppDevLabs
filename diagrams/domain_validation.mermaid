@@ -1,0 +1,61 @@
+classDiagram
+    direction TB
+
+    class Validator~T~ {
+        <<interface>>
+        +setNext(Validator~T~) void
+        +validate(T) void
+    }
+
+    class AbstractValidator~T~ {
+        <<abstract>>
+        -Validator~T~ next
+        +setNext(Validator~T~) void
+        #callNext(T) void
+    }
+
+    class MissionBasicValidator {
+        +validate(Mission) void
+    }
+
+    class CurseValidator {
+        +validate(Mission) void
+    }
+
+    class SorcerersValidator {
+        +validate(Mission) void
+    }
+
+    class TechniquesValidator {
+        +validate(Mission) void
+    }
+
+    class BusinessRulesValidator {
+        +validate(Mission) void
+    }
+
+    class ValChainFactory {
+        +createDefaultChain() Validator~Mission~
+    }
+
+    class ValidationException {
+        +ValidationException(String)
+    }
+
+    %% Context classes
+    class Mission
+
+    %% Relationships
+    Validator <|.. AbstractValidator
+    AbstractValidator <|-- MissionBasicValidator
+    AbstractValidator <|-- CurseValidator
+    AbstractValidator <|-- SorcerersValidator
+    AbstractValidator <|-- TechniquesValidator
+    AbstractValidator <|-- BusinessRulesValidator
+    ValChainFactory ..> Validator : creates
+    ValChainFactory ..> MissionBasicValidator : creates
+    ValChainFactory ..> CurseValidator : creates
+    ValChainFactory ..> SorcerersValidator : creates
+    ValChainFactory ..> TechniquesValidator : creates
+    ValChainFactory ..> BusinessRulesValidator : creates
+    AbstractValidator ..> ValidationException : throws

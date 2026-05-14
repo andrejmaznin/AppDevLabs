@@ -1,0 +1,74 @@
+classDiagram
+    direction TB
+
+    namespace persistence {
+        class MissionRepository { <<interface>> }
+        class InMemoryMissionRepository {
+            -List~Mission~ missions
+        }
+        class DbMissionRepository {
+            -JpaMissionRepository jpaRepo
+        }
+        class JpaMissionRepository { <<interface>> }
+        class MissionEntity {
+            -String missionId
+            -String dataJson
+        }
+    }
+
+    namespace io {
+        class MissionSource { <<interface>> }
+        class FileMissionSource {
+            -File file
+            +loadMissions() List~Mission~
+        }
+    }
+
+    namespace parsing {
+        class MissionParser {
+            <<interface>>
+            +parse(String) Mission
+        }
+        class JsonMissionParser
+        class XmlMissionParser
+        class TxtMissionParser
+        class YamlMissionParser
+        class BinMissionParser
+        class MissionParserFactory {
+            +getParser(ParserType) MissionParser
+            +getParserByFileName(String) MissionParser
+        }
+        class ParserType {
+            <<enumeration>>
+            JSON
+            XML
+            TXT
+            YAML
+            BIN
+        }
+    }
+
+    %% Domain classes for context
+    class Mission
+
+    %% Relationships Persistence
+    MissionRepository <|.. InMemoryMissionRepository
+    MissionRepository <|.. DbMissionRepository
+    DbMissionRepository "1" o-- "1" JpaMissionRepository
+    JpaMissionRepository ..> MissionEntity : manages
+    InMemoryMissionRepository "1" o-- "*" Mission
+
+    %% Relationships IO
+    MissionSource <|.. FileMissionSource
+    FileMissionSource ..> MissionParserFactory : uses
+    FileMissionSource ..> MissionParser : uses
+
+    %% Relationships Parsing
+    MissionParser <|.. JsonMissionParser
+    MissionParser <|.. XmlMissionParser
+    MissionParser <|.. TxtMissionParser
+    MissionParser <|.. YamlMissionParser
+    MissionParser <|.. BinMissionParser
+    MissionParserFactory ..> MissionParser : creates
+    MissionParserFactory ..> ParserType : uses
+    MissionParser ..> Mission : creates

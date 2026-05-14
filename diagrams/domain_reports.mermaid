@@ -1,0 +1,89 @@
+classDiagram
+    direction TB
+
+    class MissionReport {
+        <<interface>>
+    }
+
+    class BasicMissionReport {
+        -String missionId
+        -String date
+        -String location
+        -String outcome
+        -String formattedDamage
+        -String comment
+        -String curseName
+        -String curseThreatLevel
+        -String environmentSummary
+        -String civilianImpactSummary
+        -String enemyActivitySummary
+        -List~String~ sorcerersDetails
+        -List~String~ techniquesDetails
+        -List~String~ timelineDetails
+        +BasicMissionReport(...)
+        +getMissionId() String
+        +getDate() String
+        +getLocation() String
+        +getOutcome() String
+        +getFormattedDamage() String
+        +getComment() String
+        +getCurseName() String
+        +getCurseThreatLevel() String
+        +getEnvironmentSummary() String
+        +getCivilianImpactSummary() String
+        +getEnemyActivitySummary() String
+        +getSorcerersDetails() List~String~
+        +getTechniquesDetails() List~String~
+        +getTimelineDetails() List~String~
+    }
+
+    class TreeReport {
+        -ReportTreeNode rootNode
+        +TreeReport(ReportTreeNode)
+        +getRootNode() ReportTreeNode
+    }
+
+    class ReportTreeNode {
+        -String label
+        -List~ReportTreeNode~ children
+        +ReportTreeNode(String)
+        +getLabel() String
+        +getChildren() List~ReportTreeNode~
+        +addChild(ReportTreeNode) void
+    }
+
+    class ReportStrategy {
+        <<interface>>
+        +generate(Object) MissionReport
+    }
+
+    class BasicReportStrategy {
+        +generate(Object) BasicMissionReport
+    }
+
+    class TreeReportStrategy {
+        +generate(Object) TreeReport
+        -buildTreeNode(Object, String, Map, int) ReportTreeNode
+        -isSimple(Class) boolean
+        -nameFromGetter(String) String
+    }
+
+    class ReportNavigator {
+        -ReportStrategy strategy
+        +ReportNavigator()
+        +ReportNavigator(ReportStrategy)
+        +setStrategy(ReportStrategy) void
+        +execute(Object) MissionReport
+    }
+
+    %% Relationships
+    MissionReport <|.. BasicMissionReport
+    MissionReport <|.. TreeReport
+    TreeReport "1" *-- "1" ReportTreeNode
+    ReportTreeNode "1" *-- "*" ReportTreeNode : children
+    ReportStrategy <|.. BasicReportStrategy
+    ReportStrategy <|.. TreeReportStrategy
+    ReportNavigator "1" o-- "1" ReportStrategy
+    BasicReportStrategy ..> BasicMissionReport : creates
+    TreeReportStrategy ..> TreeReport : creates
+    TreeReportStrategy ..> ReportTreeNode : creates

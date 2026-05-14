@@ -22,7 +22,11 @@ public class Main {
         logger.info("Инициализация приложения...");
         Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
         dotenv.entries().forEach(entry -> {
-            System.setProperty(entry.getKey(), entry.getValue());
+            String value = entry.getValue();
+            if (entry.getKey().equals("DB_URL") && value.contains("localhost")) {
+                value = value.replace("localhost", "127.0.0.1");
+            }
+            System.setProperty(entry.getKey(), value);
         });
         logger.debug("Переменные окружения загружены");
 

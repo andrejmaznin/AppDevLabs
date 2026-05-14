@@ -1,0 +1,46 @@
+classDiagram
+    direction TB
+
+    class MissionSpecification {
+        <<interface>>
+        +isSatisfiedBy(Mission) boolean
+    }
+
+    class AndSpecification {
+        -MissionSpecification spec1
+        -MissionSpecification spec2
+        +AndSpecification(MissionSpecification, MissionSpecification)
+        +isSatisfiedBy(Mission) boolean
+    }
+
+    class FullTextSpecification {
+        -String[] tokens
+        +FullTextSpecification(String)
+        +isSatisfiedBy(Mission) boolean
+        -extractTextViaReflection(Object, StringBuilder, Set) void
+    }
+
+    class MissionIdSpecification {
+        -String targetId
+        +MissionIdSpecification(String)
+        +isSatisfiedBy(Mission) boolean
+    }
+
+    class OutcomeSpecification {
+        -String expectedOutcome
+        +OutcomeSpecification(String)
+        +isSatisfiedBy(Mission) boolean
+    }
+
+    %% Context classes
+    class Mission
+
+    %% Relationships
+    MissionSpecification <|.. AndSpecification
+    MissionSpecification <|.. FullTextSpecification
+    MissionSpecification <|.. MissionIdSpecification
+    MissionSpecification <|.. OutcomeSpecification
+    AndSpecification "1" o-- "2" MissionSpecification
+    FullTextSpecification ..> Mission : uses
+    MissionIdSpecification ..> Mission : uses
+    OutcomeSpecification ..> Mission : uses

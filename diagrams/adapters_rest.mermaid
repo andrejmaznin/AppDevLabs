@@ -1,0 +1,26 @@
+classDiagram
+    direction TB
+
+    class MissionRestController {
+        -MissionUseCase missionUseCase
+        +MissionRestController(MissionUseCase)
+        +getMissions(String) List~Mission~
+        +getMissionById(String) Mission
+        +addMission(Mission) void
+        +importMission(MultipartFile) void
+        +clearMissions() void
+        +getBasicReport(String) BasicMissionReport
+        +getTreeReport(String) TreeReport
+    }
+
+    %% Context classes
+    class MissionUseCase { <<interface>> }
+    class Mission
+    class BasicMissionReport
+    class TreeReport
+
+    %% Relationships
+    MissionRestController "1" o-- "1" MissionUseCase
+    MissionRestController ..> Mission : uses
+    MissionRestController ..> BasicMissionReport : uses
+    MissionRestController ..> TreeReport : uses

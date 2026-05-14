@@ -1,0 +1,56 @@
+classDiagram
+    direction TB
+
+    namespace rest {
+        class MissionRestController {
+            -MissionUseCase missionUseCase
+            +getMissions(String) List~Mission~
+            +getMissionById(String) Mission
+            +addMission(Mission)
+            +importMission(MultipartFile)
+            +getBasicReport(String) BasicMissionReport
+            +getTreeReport(String) TreeReport
+        }
+    }
+
+    namespace gui {
+        class MainFrame {
+            -MissionUseCase missionUseCase
+            -MissionTableModel tableModel
+            +refreshTable()
+        }
+        class MissionFrame {
+            -Mission mission
+            +display()
+        }
+        class MissionTableModel {
+            -List~Mission~ missions
+        }
+        class SmartMissionFrame
+        class SmartTreeRenderer
+    }
+
+    %% Core Interfaces/Classes for context
+    class MissionUseCase { <<interface>> }
+    class Mission
+    class BasicMissionReport
+    class TreeReport
+    class MissionParser
+    class MissionParserFactory
+
+    %% Relationships REST
+    MissionRestController "1" o-- "1" MissionUseCase
+    MissionRestController ..> Mission : uses
+    MissionRestController ..> BasicMissionReport : uses
+    MissionRestController ..> TreeReport : uses
+    MissionRestController ..> MissionParser : uses
+    MissionRestController ..> MissionParserFactory : uses
+
+    %% Relationships GUI
+    MainFrame "1" o-- "1" MissionUseCase
+    MainFrame "1" o-- "1" MissionTableModel
+    MainFrame ..> MissionFrame : creates
+    MissionFrame "1" o-- "1" Mission
+    SmartMissionFrame --|> MissionFrame
+    SmartMissionFrame "1" o-- "1" SmartTreeRenderer
+    MissionTableModel "1" o-- "*" Mission

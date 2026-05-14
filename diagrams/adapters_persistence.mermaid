@@ -1,0 +1,59 @@
+classDiagram
+    direction TB
+
+    class DbMissionRepository {
+        -JpaMissionRepository jpaRepository
+        +DbMissionRepository(JpaMissionRepository)
+        +save(Mission) void
+        +saveAll(List~Mission~) void
+        +findAll() List~Mission~
+        +findById(String) Optional~Mission~
+        +deleteAll() void
+        +deleteById(String) void
+    }
+
+    class InMemoryMissionRepository {
+        -List~Mission~ missions
+        +save(Mission) void
+        +saveAll(List~Mission~) void
+        +findAll() List~Mission~
+        +findById(String) Optional~Mission~
+        +deleteAll() void
+        +deleteById(String) void
+    }
+
+    class JpaMissionRepository {
+        <<interface>>
+    }
+
+    class MissionEntity {
+        -String missionId
+        -String date
+        -String location
+        -String outcome
+        -long damageCost
+        -String comment
+        -CurseEntity curse
+        -List~SorcererEntity~ sorcerers
+        -List~TechniqueEntity~ techniques
+        -EconomicAssessmentEntity economicAssessment
+        -CivilianImpactEntity civilianImpact
+        -EnemyActivityEntity enemyActivity
+        -EnvironmentConditionsEntity environmentConditions
+        -List~OperationEventEntity~ operationTimeline
+        +fromDomain(Mission) MissionEntity
+        +toDomain() Mission
+    }
+
+    %% Core Interface
+    class MissionRepository { <<interface>> }
+    class Mission
+
+    %% Relationships
+    MissionRepository <|.. DbMissionRepository
+    MissionRepository <|.. InMemoryMissionRepository
+    DbMissionRepository "1" o-- "1" JpaMissionRepository
+    JpaMissionRepository ..> MissionEntity : manages
+    MissionEntity ..> Mission : maps
+    DbMissionRepository ..> MissionEntity : uses
+    InMemoryMissionRepository "1" *-- "*" Mission

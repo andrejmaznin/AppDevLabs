@@ -1,0 +1,119 @@
+classDiagram
+    direction TB
+
+    class MissionBuilder {
+        <<interface>>
+        +setMissionId(String) MissionBuilder
+        +setDate(String) MissionBuilder
+        +setLocation(String) MissionBuilder
+        +setOutcome(String) MissionBuilder
+        +setDamageCost(long) MissionBuilder
+        +setComment(String) MissionBuilder
+        +setCurse(Curse) MissionBuilder
+        +setSorcerers(List~Sorcerer~) MissionBuilder
+        +setTechniques(List~Technique~) MissionBuilder
+        +setCurseDetails(String, String) MissionBuilder
+        +addSorcerer(Sorcerer) MissionBuilder
+        +addTechnique(Technique) MissionBuilder
+        +setEconomicAssessment(EconomicAssessment) MissionBuilder
+        +setCivilianImpact(CivilianImpact) MissionBuilder
+        +setEnemyActivity(EnemyActivity) MissionBuilder
+        +setEnvironmentConditions(EnvironmentConditions) MissionBuilder
+        +setOperationTimeline(List~OperationEvent~) MissionBuilder
+        +setOperationTags(List~String~) MissionBuilder
+        +setSupportUnits(List~String~) MissionBuilder
+        +setRecommendations(List~String~) MissionBuilder
+        +setArtifactsRecovered(List~String~) MissionBuilder
+        +setEvacuationZones(List~String~) MissionBuilder
+        +setStatusEffects(List~String~) MissionBuilder
+        +build() Mission
+    }
+
+    class StandardMissionBuilder {
+        -String missionId
+        -String date
+        -String location
+        -String outcome
+        -long damageCost
+        -Curse curse
+        -String comment
+        -List~Sorcerer~ sorcerers
+        -List~Technique~ techniques
+        -EconomicAssessment economicAssessment
+        -CivilianImpact civilianImpact
+        -EnemyActivity enemyActivity
+        -EnvironmentConditions environmentConditions
+        -List~OperationEvent~ operationTimeline
+        -List~String~ operationTags
+        -List~String~ supportUnits
+        -List~String~ recommendations
+        -List~String~ artifactsRecovered
+        -List~String~ evacuationZones
+        -List~String~ statusEffects
+        +setMissionId(String) MissionBuilder
+        +setDate(String) MissionBuilder
+        +setLocation(String) MissionBuilder
+        +setOutcome(String) MissionBuilder
+        +setDamageCost(long) MissionBuilder
+        +setComment(String) MissionBuilder
+        +setCurse(Curse) MissionBuilder
+        +setSorcerers(List~Sorcerer~) MissionBuilder
+        +setTechniques(List~Technique~) MissionBuilder
+        +setCurseDetails(String, String) MissionBuilder
+        +addSorcerer(Sorcerer) MissionBuilder
+        +addTechnique(Technique) MissionBuilder
+        +setEconomicAssessment(EconomicAssessment) MissionBuilder
+        +setCivilianImpact(CivilianImpact) MissionBuilder
+        +setEnemyActivity(EnemyActivity) MissionBuilder
+        +setEnvironmentConditions(EnvironmentConditions) MissionBuilder
+        +setOperationTimeline(List~OperationEvent~) MissionBuilder
+        +setOperationTags(List~String~) MissionBuilder
+        +setSupportUnits(List~String~) MissionBuilder
+        +setRecommendations(List~String~) MissionBuilder
+        +setArtifactsRecovered(List~String~) MissionBuilder
+        +setEvacuationZones(List~String~) MissionBuilder
+        +setStatusEffects(List~String~) MissionBuilder
+        +build() Mission
+    }
+
+    class MissionBuildDirector {
+        -MissionBuilder builder
+        +construct(MissionData) Mission
+    }
+
+    class MissionData {
+        +String missionId
+        +String date
+        +String location
+        +String outcome
+        +long damageCost
+        +String comment
+        +String curseName
+        +String curseThreatLevel
+        +Curse curse
+        +List~Sorcerer~ sorcerers
+        +List~Technique~ techniques
+        +EconomicAssessment economicAssessment
+        +CivilianImpact civilianImpact
+        +EnemyActivity enemyActivity
+        +EnvironmentConditions environmentConditions
+        +List~OperationEvent~ operationTimeline
+    }
+
+    %% Context classes
+    class Mission
+    class Curse
+    class Sorcerer
+    class Technique
+    class EconomicAssessment
+    class CivilianImpact
+    class EnemyActivity
+    class EnvironmentConditions
+    class OperationEvent
+
+    %% Relationships
+    MissionBuilder <|.. StandardMissionBuilder
+    MissionBuildDirector "1" o-- "1" MissionBuilder
+    MissionBuildDirector ..> MissionData : uses
+    MissionBuilder ..> Mission : creates
+    StandardMissionBuilder ..> Mission : creates

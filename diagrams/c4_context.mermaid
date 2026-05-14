@@ -1,0 +1,13 @@
+C4Context
+  title System Context diagram for AppDevLabs (Mission Management System)
+
+  Person(user, "Администратор / Магический Аналитик", "Пользователь, управляющий миссиями, составом магов и анализирующий отчеты.")
+
+  System(appDevLabs, "AppDevLabs System", "Система управления магическими операциями. Обеспечивает жизненный цикл миссий, валидацию техник и расчет экономических показателей.")
+
+  System_Ext(fileSystem, "Файловая Система", "Хранилище внешних файлов миссий в форматах JSON, XML, YAML, TXT, BIN.")
+  System_Ext(database, "Реляционная БД", "Постоянное хранилище для сущностей миссий, техник и результатов операций.")
+
+  Rel(user, appDevLabs, "Управляет миссиями и запрашивает отчеты", "GUI (Swing) / REST API")
+  Rel(appDevLabs, fileSystem, "Импортирует/Экспортирует данные", "File I/O")
+  Rel(appDevLabs, database, "Сохраняет и извлекает состояние", "JPA / JDBC")

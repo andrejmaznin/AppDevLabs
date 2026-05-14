@@ -1,0 +1,17 @@
+classDiagram
+    direction TB
+
+    class FileMissionSource {
+        -File file
+        +FileMissionSource(File)
+        +loadMissions() List~Mission~
+    }
+
+    %% Core Interface
+    class MissionSource { <<interface>> }
+    class Mission
+
+    %% Relationships
+    MissionSource <|.. FileMissionSource
+    FileMissionSource ..> Mission : returns
+    FileMissionSource ..> MissionParserFactory : uses

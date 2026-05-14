@@ -1,0 +1,192 @@
+classDiagram
+    direction TB
+
+    class Mission {
+        -String missionId
+        -String date
+        -String location
+        -String outcome
+        -long damageCost
+        -Curse curse
+        -String comment
+        -List~Sorcerer~ sorcerers
+        -List~Technique~ techniques
+        -EconomicAssessment economicAssessment
+        -CivilianImpact civilianImpact
+        -EnemyActivity enemyActivity
+        -EnvironmentConditions environmentConditions
+        -List~OperationEvent~ operationTimeline
+        -List~String~ operationTags
+        -List~String~ supportUnits
+        -List~String~ recommendations
+        -List~String~ artifactsRecovered
+        -List~String~ evacuationZones
+        -List~String~ statusEffects
+        +validate() void
+        +getMissionId() String
+        +setMissionId(String) void
+        +getDate() String
+        +setDate(String) void
+        +getLocation() String
+        +setLocation(String) void
+        +getOutcome() String
+        +setOutcome(String) void
+        +getDamageCost() long
+        +setDamageCost(long) void
+        +getCurse() Curse
+        +setCurse(Curse) void
+        +getComment() String
+        +setComment(String) void
+        +getSorcerers() List~Sorcerer~
+        +setSorcerers(List~Sorcerer~) void
+        +getTechniques() List~Technique~
+        +setTechniques(List~Technique~) void
+        +getEconomicAssessment() EconomicAssessment
+        +setEconomicAssessment(EconomicAssessment) void
+        +getCivilianImpact() CivilianImpact
+        +setCivilianImpact(CivilianImpact) void
+        +getEnemyActivity() EnemyActivity
+        +setEnemyActivity(EnemyActivity) void
+        +getEnvironmentConditions() EnvironmentConditions
+        +setEnvironmentConditions(EnvironmentConditions) void
+        +getOperationTimeline() List~OperationEvent~
+        +setOperationTimeline(List~OperationEvent~) void
+        +getOperationTags() List~String~
+        +setOperationTags(List~String~) void
+        +getSupportUnits() List~String~
+        +setSupportUnits(List~String~) void
+        +getRecommendations() List~String~
+        +setRecommendations(List~String~) void
+        +getArtifactsRecovered() List~String~
+        +setArtifactsRecovered(List~String~) void
+        +getEvacuationZones() List~String~
+        +setEvacuationZones(List~String~) void
+        +getStatusEffects() List~String~
+        +setStatusEffects(List~String~) void
+    }
+
+    class Curse {
+        -String name
+        -String threatLevel
+        +getName() String
+        +setName(String) void
+        +getThreatLevel() String
+        +setThreatLevel(String) void
+    }
+
+    class Sorcerer {
+        -String name
+        -String rank
+        +getName() String
+        +setName(String) void
+        +getRank() String
+        +setRank(String) void
+    }
+
+    class Technique {
+        -String name
+        -String type
+        -String owner
+        -int damage
+        +getName() String
+        +setName(String) void
+        +getType() String
+        +setType(String) void
+        +getOwner() String
+        +setOwner(String) void
+        +getDamage() int
+        +setDamage(int) void
+    }
+
+    class EconomicAssessment {
+        -Long totalDamageCost
+        -Long infrastructureDamage
+        -Long commercialDamage
+        -Long transportDamage
+        -Integer recoveryEstimateDays
+        -Boolean insuranceCovered
+        +getTotalDamageCost() Long
+        +setTotalDamageCost(Long) void
+        +getInfrastructureDamage() Long
+        +setInfrastructureDamage(Long) void
+        +getCommercialDamage() Long
+        +setCommercialDamage(Long) void
+        +getTransportDamage() Long
+        +setTransportDamage(Long) void
+        +getRecoveryEstimateDays() Integer
+        +setRecoveryEstimateDays(Integer) void
+        +getInsuranceCovered() Boolean
+        +setInsuranceCovered(Boolean) void
+    }
+
+    class CivilianImpact {
+        -Integer evacuated
+        -Integer injured
+        -Integer missing
+        -String publicExposureRisk
+        +getEvacuated() Integer
+        +setEvacuated(Integer) void
+        +getInjured() Integer
+        +setInjured(Integer) void
+        +getMissing() Integer
+        +setMissing(Integer) void
+        +getPublicExposureRisk() String
+        +setPublicExposureRisk(String) void
+    }
+
+    class EnemyActivity {
+        -String behaviorType
+        -List~String~ targetPriority
+        -List~String~ attackPatterns
+        -List~String~ countermeasuresUsed
+        -String mobility
+        -String escalationRisk
+        +getBehaviorType() String
+        +setBehaviorType(String) void
+        +getTargetPriority() List~String~
+        +setTargetPriority(List~String~) void
+        +getAttackPatterns() List~String~
+        +setAttackPatterns(List~String~) void
+        +getCountermeasuresUsed() List~String~
+        +setCountermeasuresUsed(List~String~) void
+        +getMobility() String
+        +setMobility(String) void
+        +getEscalationRisk() String
+        +setEscalationRisk(String) void
+    }
+
+    class EnvironmentConditions {
+        -String weather
+        -String timeOfDay
+        -String visibility
+        -Double cursedEnergyDensity
+        +getWeather() String
+        +setWeather(String) void
+        +getTimeOfDay() String
+        +setTimeOfDay(String) void
+        +getVisibility() String
+        +setVisibility(String) void
+        +getCursedEnergyDensity() Double
+        +setCursedEnergyDensity(Double) void
+    }
+
+    class OperationEvent {
+        -String timestamp
+        -String type
+        -String description
+        +getTimestamp() String
+        +setTimestamp(String) void
+        +getType() String
+        +setType(String) void
+        +getDescription() String
+        +setDescription(String) void
+    }
+
+    Mission "1" *-- "1" Curse
+    Mission "1" *-- "*" Sorcerer
+    Mission "1" *-- "*" Technique
+    Mission "1" *-- "1" EconomicAssessment
+    Mission "1" *-- "1" CivilianImpact
+    Mission "1" *-- "1" EnemyActivity
+    Mission "1" *-- "1" EnvironmentConditions
+    Mission "1" *-- "*" OperationEvent

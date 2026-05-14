@@ -1,0 +1,68 @@
+sequenceDiagram
+    actor User as Пользователь
+    participant GUI as MainFrame (Inbound Adapter)
+    participant TM as MissionTableModel (GUI State)
+    participant UC as AppEngine (Application Core)
+    participant Store as MissionStore (Domain Core)
+    participant Repo as MissionRepository (Outbound Port)
+    participant FS as FileSystem (External System)
+    participant DB as PostgreSQL (Database)
+
+    Note over User, DB: Сценарий: Импорт миссии из файла
+    
+    User->>GUI: Нажимает "Импорт"
+    GUI->>GUI: Открывает JFileChooser
+    User->>GUI: Выбирает файл
+    
+    GUI->>UC: importMission(file)
+    activate UC
+    UC->>UC: Создает FileMissionSource
+    UC->>FS: Чтение контента файла
+    activate FS
+    FS-->>UC: Raw Data (JSON/XML/...)
+    deactivate FS
+    
+    UC->>Store: addAll(missions)
+    activate Store
+    Store->>Repo: saveAll(missions)
+    activate Repo
+    Repo->>DB: SQL INSERT/UPDATE
+    activate DB
+    DB-->>Repo: Acknowledge
+    deactivate DB
+    Repo-->>Store: success
+    deactivate Repo
+    
+    Store->>Store: notifyListeners()
+    
+    Store-->>TM: onStoreChanged()
+    activate TM
+    TM->>Store: getAll() / find(filter)
+    Store-->>TM: List<Mission>
+    TM->>TM: fireTableDataChanged()
+    deactivate TM
+    
+    Store-->>UC: return
+    deactivate Store
+    UC-->>GUI: success message
+    deactivate UC
+    
+    GUI-->>User: Показывает JOptionPane "Успешно"
+    
+    Note over User, DB: Сценарий: Просмотр отчетов
+    
+    User->>GUI: Клик по кнопке в таблице
+    GUI->>TM: getMissionAt(row)
+    TM-->>GUI: mission
+    
+    alt Кнопка "Панель" (столбец 6)
+        GUI->>GUI: new ReportNavigator(new BasicReportStrategy())
+        GUI->>GUI: navigator.execute(mission)
+        GUI->>GUI: showMissionDetails(report)
+        GUI-->>User: Окно MissionFrame
+    else Кнопка "Дерево" (столбец 7)
+        GUI->>GUI: new ReportNavigator(new TreeReportStrategy())
+        GUI->>GUI: navigator.execute(mission)
+        GUI->>GUI: SmartMissionFrame.showInFrame(report)
+        GUI-->>User: Окно с деревом объектов
+    end

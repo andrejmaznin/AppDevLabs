@@ -1,0 +1,27 @@
+C4Container
+    title Container diagram for AppDevLabs System (Hexagonal Perspective)
+
+    Person(user, "Администратор / Магический Аналитик", "Пользователь, управляющий миссиями и отчетами.")
+
+    System_Boundary(c1, "AppDevLabs Application") {
+        Container(gui, "Swing GUI", "Java, Swing", "Интерфейс для настольных ПК (adapters.in.gui).")
+        Container(rest, "REST API", "Java, Spring Boot", "Программный интерфейс (adapters.in.rest).")
+        
+        Container(core, "Application Core", "Java", "Бизнес-логика, Use Cases (application), Доменные модели и валидация (domain).")
+        
+        Container(infrastructure, "Infrastructure Adapters", "Java, JPA/Parsers", "Реализация доступа к данным и парсинга (adapters.out).")
+    }
+
+    System_Ext(database, "Database", "Relational Database", "Хранит состояние миссий.")
+    System_Ext(file_system, "File System", "Storage", "Внешние файлы данных (JSON, XML, YAML и др.).")
+
+    Rel(user, gui, "Использует", "Desktop Interface")
+    Rel(user, rest, "Использует", "JSON/HTTPS")
+    
+    Rel(gui, core, "Вызывает", "MissionUseCase (Port)")
+    Rel(rest, core, "Вызывает", "MissionUseCase (Port)")
+    
+    Rel(core, infrastructure, "Запрашивает данные", "MissionRepository / MissionSource (Ports)")
+    
+    Rel(infrastructure, database, "Чтение/Запись", "JPA")
+    Rel(infrastructure, file_system, "Парсинг файлов", "File I/O / MissionParser")

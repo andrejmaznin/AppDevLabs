@@ -1,0 +1,44 @@
+classDiagram
+    direction TB
+
+    class AppEngine {
+        -MissionStore store
+        +AppEngine(MissionStore)
+        +importMissions(MissionSource) void
+        +importMission(File) void
+        +getAllMissions() List~Mission~
+        +findMissionById(String) Optional~Mission~
+        +clearMissions() void
+        +getStore() MissionStore
+    }
+
+    class MissionStore {
+        -MissionRepository repository
+        -CopyOnWriteArrayList~MissionStoreListener~ listeners
+        +MissionStore(MissionRepository)
+        +add(Mission) void
+        +addAll(List~Mission~) void
+        +getAll() List~Mission~
+        +clear() void
+        +get(int) Mission
+        +size() int
+        +addListener(MissionStoreListener) void
+        +removeListener(MissionStoreListener) void
+        -notifyListeners() void
+        +find(MissionSpecification) List~Mission~
+        +findById(String) Optional~Mission~
+    }
+
+    %% Interfaces from ports
+    class MissionUseCase { <<interface>> }
+    class MissionStoreListener { <<interface>> }
+    class MissionRepository { <<interface>> }
+    class MissionSource { <<interface>> }
+
+    %% Relationships
+    MissionUseCase <|.. AppEngine
+    AppEngine "1" o-- "1" MissionStore
+    MissionStore "1" o-- "1" MissionRepository
+    MissionStore "1" o-- "*" MissionStoreListener
+    AppEngine ..> MissionSource : uses
+    MissionStore ..> MissionSpecification : uses
